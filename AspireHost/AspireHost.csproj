@@ -11,6 +11,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\src\DotNetCleanTemplate.API\DotNetCleanTemplate.API.csproj" />
+      <ProjectReference Include="..\src\DotNetCleanTemplate.Gateway\DotNetCleanTemplate.Gateway.csproj" />
     </ItemGroup>
 
 </Project>
