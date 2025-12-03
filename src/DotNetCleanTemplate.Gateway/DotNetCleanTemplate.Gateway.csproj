@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../../DotNetCleanTemplate.ServiceDefaults/DotNetCleanTemplate.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\DotNetCleanTemplate.ServiceDefaults\DotNetCleanTemplate.ServiceDefaults.csproj" />
     </ItemGroup>
 
 </Project>

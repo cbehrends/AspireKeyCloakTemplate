@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Hosting;
-using Yarp.ReverseProxy;
 
 var builder = WebApplication.CreateBuilder(args);
 

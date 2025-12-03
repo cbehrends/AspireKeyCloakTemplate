@@ -10,8 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\DotNetCleanTemplate.API\DotNetCleanTemplate.API.csproj" />
-      <ProjectReference Include="..\src\DotNetCleanTemplate.Gateway\DotNetCleanTemplate.Gateway.csproj" />
+      <ProjectReference Include="..\DotNetCleanTemplate.API\DotNetCleanTemplate.API.csproj" />
+      <ProjectReference Include="..\DotNetCleanTemplate.Gateway\DotNetCleanTemplate.Gateway.csproj" />
     </ItemGroup>
 
 </Project>
