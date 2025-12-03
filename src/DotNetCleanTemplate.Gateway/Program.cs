@@ -26,3 +26,7 @@ app.UseHttpsRedirection();
 // Map the reverse proxy
 app.MapReverseProxy();
 
+// Serve the React app SPA
+app.MapFallbackToFile("index.html");
+
+app.Run();

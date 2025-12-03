@@ -15,4 +15,8 @@
         <ProjectReference Include="..\DotNetCleanTemplate.ServiceDefaults\DotNetCleanTemplate.ServiceDefaults.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>
