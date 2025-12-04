@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import TanChatAIAssistant from './example-AIAssistant.tsx'
 
 import { useState } from 'react'
+import { useAuth } from '../auth/AuthProvider'
 import {
   ChevronDown,
   ChevronRight,
@@ -22,26 +23,56 @@ export default function Header() {
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
+  const auth = useAuth()
 
   return (
     <>
-      <header className="p-4 flex items-center bg-gray-800 text-white shadow-lg">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-          aria-label="Open menu"
-        >
-          <Menu size={24} />
-        </button>
-        <h1 className="ml-4 text-xl font-semibold">
-          <Link to="/">
-            <img
-              src="/tanstack-word-logo-white.svg"
-              alt="TanStack Logo"
-              className="h-10"
-            />
-          </Link>
-        </h1>
+      <header className="p-4 flex items-center justify-between bg-gray-800 text-white shadow-lg">
+        <div className="flex items-center">
+          <button
+            onClick={() => setIsOpen(true)}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu size={24} />
+          </button>
+          <h1 className="ml-4 text-xl font-semibold">
+            <Link to="/">
+              <img
+                src="/tanstack-word-logo-white.svg"
+                alt="TanStack Logo"
+                className="h-10"
+              />
+            </Link>
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {auth.initialized ? (
+            auth.isAuthenticated ? (
+              <>
+                <span className="text-sm opacity-90">
+                  {auth.user?.preferred_username || auth.user?.name || 'Signed in'}
+                </span>
+                <button
+                  onClick={() => auth.logout()}
+                  className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => auth.login()}
+                className="px-3 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+              >
+                Login
+              </button>
+            )
+          ) : (
+            <span className="text-sm opacity-80">Loading auth…</span>
+          )}
+        </div>
       </header>
 
       <aside

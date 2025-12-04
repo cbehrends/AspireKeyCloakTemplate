@@ -10,10 +10,11 @@ builder.Services.AddOpenApi();
 builder.Services.AddAuthentication()
     .AddKeycloakJwtBearer(
         serviceName: "keycloak",
-        realm: "api",
+        realm: "master",
         options =>
         {
             options.Audience = "store.api";
+            options.Authority = "http://keycloak:8080/realms/master";
 
             // For development only - disable HTTPS metadata validation
             // In production, use explicit Authority configuration instead
