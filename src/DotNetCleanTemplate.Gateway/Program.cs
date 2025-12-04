@@ -1,15 +1,35 @@
 
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Yarp.ReverseProxy.Transforms;
 
-builder.AddServiceDefaults();
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddKeycloakOpenIdConnect(
+        serviceName: "keycloak",
+        realm: "api",
+        options =>
+        {
+            options.ClientId = "StoreWeb";
+            options.ResponseType = OpenIdConnectResponseType.Code;
+            options.Scope.Add("store:all");
+        });
+
 // Add YARP reverse proxy
+// Append a bearer token (from configuration) to outbound requests for the "api" route/cluster
+var proxyBearerToken = builder.Configuration.GetValue<string>("ProxyAuth:BearerToken");
+
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .AddTransforms(builderContext =>
+    {
+        builderContext.AddRequestHeader("Authorization", $"Bearer {proxyBearerToken}", append: false);
+    });
 
 var app = builder.Build();
 
