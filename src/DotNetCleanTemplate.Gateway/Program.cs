@@ -1,77 +1,41 @@
-
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Yarp.ReverseProxy.Transforms;
+using DotNetCleanTemplate.Gateway.Features.Core;
+using DotNetCleanTemplate.Gateway.Features.Users.Endpoints;
+using DotNetCleanTemplate.ServiceDefaults;
+using Duende.AccessTokenManagement.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-builder.Services.AddHealthChecks();
-builder.Services.AddAuthentication(options =>
-    {
-        // Use cookies to store the local auth session and OIDC for challenges
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-    })
-    .AddCookie()
-    .AddKeycloakOpenIdConnect(
-        serviceName: "keycloak",
-        realm: "master",
-        options =>
-        {
-            options.ClientId = "gateway-client";
-            options.ClientSecret = "gateway-secret";
-            options.ResponseType = OpenIdConnectResponseType.Code;
-            options.UsePkce = true;
-            options.Authority = "http://keycloak:8080/realms/master";
-            options.RequireHttpsMetadata = false;
+builder.AddServiceDefaults();
 
-        });
-builder.Services.AddAuthorization();
+builder.AddReverseProxy();
+builder.AddAuthenticationSchemes();
+builder.AddRateLimiting();
 
-// Add YARP reverse proxy
-// Append a bearer token (from configuration) to outbound requests for the "api" route/cluster
-var proxyBearerToken = builder.Configuration.GetValue<string>("ProxyAuth:BearerToken");
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddOpenIdConnectAccessTokenManagement();
 
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
-    .AddTransforms(builderContext =>
-    {
-        builderContext.AddRequestHeader("Authorization", $"Bearer {proxyBearerToken}", append: false);
-    });
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    context.Response.OnStarting(() =>
-    {
-        context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'self' http://localhost:8080";
-        return Task.CompletedTask;
-    });
-    await next();
-});
-
-app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
+app.UseStatusCodePages();
+app.UseExceptionHandler();
+app.UseAntiforgery();
 
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
-// Map the reverse proxy
-app.MapReverseProxy();
+app.MapGroup("bff")
+    .MapUserEndpoints();
 
-// Serve the React app SPA
-app.MapFallbackToFile("index.html");
+app.MapReverseProxy();
+app.MapDefaultEndpoints();
 
 app.Run();

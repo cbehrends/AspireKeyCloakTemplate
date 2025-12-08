@@ -16,39 +16,34 @@ var keyCloak = builder
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", password);
 
 var api = builder
-    .AddProject<Projects.DotNetCleanTemplate_API>("api")
+    .AddProject<Projects.DotNetCleanTemplate_API>("api", launchProfileName:"https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
-    .WaitFor(keyCloak)
-    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
-    .WithEnvironment("ASPNETCORE_URLS", "http://0.0.0.0:5002");
+    .WaitFor(keyCloak);
 
 
 
 
-var reactApp = builder
-    .AddViteApp("react-app", "../react-app")
-    .WithNpmPackageInstallation()
-    .WithEndpoint(endpointName: "http", endpoint =>
-    {
-        // This sets the *exposed* port Aspire uses to communicate with the app
-        endpoint.Port = 3000; 
-    })
-    // Also, tell the underlying Vite process to listen on this port
-    .WithEnvironment("PORT", "3000")
-    // Provide Keycloak configuration to the Vite app via env vars
-    .WithEnvironment("VITE_KEYCLOAK_URL", "http://localhost:8080")
-    .WithEnvironment("VITE_KEYCLOAK_REALM", "master")
-    .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "react-app")
-    .WaitFor(keyCloak)
-    .WaitFor(api);
-
+// var reactApp = builder
+//     .AddViteApp("react-app", "../react-app")
+//     .WithNpmPackageInstallation()
+//     .WithEndpoint(endpointName: "http", endpoint =>
+//     {
+//         // This sets the *exposed* port Aspire uses to communicate with the app
+//         endpoint.Port = 3000; 
+//     })
+//     // Also, tell the underlying Vite process to listen on this port
+//     .WithEnvironment("PORT", "3000")
+//     // Provide Keycloak configuration to the Vite app via env vars
+//     .WithEnvironment("VITE_KEYCLOAK_URL", "http://localhost:8080")
+//     .WithEnvironment("VITE_KEYCLOAK_REALM", "development")
+//     .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "react-app");
 
 var gateway = builder
-    .AddProject<Projects.DotNetCleanTemplate_Gateway>("gateway")
-    .WithExternalHttpEndpoints()
-    .WithReference(keyCloak)
-    .WithReference(reactApp)
-    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development");
+    .AddProject<Projects.DotNetCleanTemplate_Gateway>("gateway", launchProfileName: "https")
+    .WithExternalHttpEndpoints();
+    // .WithReference(keyCloak)
+    // .WithReference(reactApp)
+    // .WithReference(api);
 
 builder.Build().Run();
