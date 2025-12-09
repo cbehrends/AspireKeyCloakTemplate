@@ -2,8 +2,7 @@ import { Link } from '@tanstack/react-router'
 
 import TanChatAIAssistant from './example-AIAssistant.tsx'
 
-import { useState } from 'react'
-import { useAuth } from '../auth/AuthProvider'
+import { useEffect, useState } from 'react'
 import {
   ChevronDown,
   ChevronRight,
@@ -18,12 +17,32 @@ import {
   X,
 } from 'lucide-react'
 
+function useBffUser() {
+  const [user, setUser] = useState<{ isAuthenticated: boolean; name?: string } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/bff/user', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : { isAuthenticated: false })
+      .then(data => {
+        setUser(data)
+        setLoading(false)
+      })
+      .catch(() => {
+        setUser({ isAuthenticated: false })
+        setLoading(false)
+      })
+  }, [])
+
+  return { user, loading }
+}
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [groupedExpanded, setGroupedExpanded] = useState<
     Record<string, boolean>
   >({})
-  const auth = useAuth()
+  const { user, loading } = useBffUser()
 
   return (
     <>
@@ -46,31 +65,20 @@ export default function Header() {
             </Link>
           </h1>
         </div>
-
-        <div className="flex items-center gap-3">
-          {auth.initialized ? (
-            auth.isAuthenticated ? (
-              <>
-                <span className="text-sm opacity-90">
-                  {auth.user?.preferred_username || auth.user?.name || 'Signed in'}
-                </span>
-                <button
-                  onClick={() => auth.logout()}
-                  className="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => auth.login()}
-                className="px-3 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-              >
-                Login
-              </button>
-            )
+        <div>
+          {loading ? null : user?.isAuthenticated ? (
+            <>
+              <span className="mr-4">Hello, {user.name || 'User'}</span>
+              <a
+                href="/bff/logout"
+                className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block"
+              >Logout</a>
+            </>
           ) : (
-            <span className="text-sm opacity-80">Loading auth…</span>
+            <a
+              href="/bff/login"
+              className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
+            >Login</a>
           )}
         </div>
       </header>

@@ -2,6 +2,7 @@ using DotNetCleanTemplate.Gateway.Features.Core;
 using DotNetCleanTemplate.Gateway.Features.Users.Endpoints;
 using DotNetCleanTemplate.ServiceDefaults;
 using Duende.AccessTokenManagement.OpenIdConnect;
+using Microsoft.AspNetCore.Antiforgery;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,8 +33,13 @@ app.UseAuthentication();
 app.UseRateLimiter();
 app.UseAuthorization();
 
-app.MapGroup("bff")
-    .MapUserEndpoints();
+var bffGroup = app.MapGroup("bff");
+bffGroup.MapUserEndpoints();
+bffGroup.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext context) =>
+{
+    var tokens = antiforgery.GetAndStoreTokens(context);
+    return Results.Ok(new { token = tokens.RequestToken });
+});
 
 app.MapReverseProxy();
 app.MapDefaultEndpoints();

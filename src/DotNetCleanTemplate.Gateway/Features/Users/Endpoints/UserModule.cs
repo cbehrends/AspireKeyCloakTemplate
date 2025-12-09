@@ -11,7 +11,7 @@ internal static partial class UserModule
 {
     internal static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder builder)
     {
-        builder.MapGet("user", (ClaimsPrincipal principal) =>
+        builder.MapGet("/user", (ClaimsPrincipal principal) =>
         {
             var user = principal switch
             {
@@ -31,23 +31,21 @@ internal static partial class UserModule
             return TypedResults.Ok(user);
         });
 
-        builder.MapGet("login", (string? returnUrl, string? claimsChallenge, HttpContext context) =>
+        builder.MapGet("/login", (string? returnUrl, string? claimsChallenge, HttpContext context) =>
         {
             var properties = new AuthenticationProperties
             {
                 RedirectUri = context.BuildRedirectUrl(returnUrl),
             };
 
-            if (claimsChallenge != null)
-            {
-                string jsonString = claimsChallenge.Replace("\\", "", StringComparison.Ordinal).Trim(['"']);
-                properties.Items["claims"] = jsonString;
-            }
+            if (claimsChallenge == null) return TypedResults.Challenge(properties);
+            var jsonString = claimsChallenge.Replace("\\", "", StringComparison.Ordinal).Trim(['"']);
+            properties.Items["claims"] = jsonString;
 
             return TypedResults.Challenge(properties);
-        });
+        }).AllowAnonymous();
 
-        builder.MapGet("logout", (string? redirectUrl, HttpContext context) =>
+        builder.MapGet("/logout", (string? redirectUrl, HttpContext context) =>
         {
             var properties = new AuthenticationProperties
             {

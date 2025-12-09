@@ -54,11 +54,11 @@ internal static class Extensions
                 })
                 .AddKeycloakOpenIdConnect(
                     serviceName: "keycloak",
-                    realm: "development",
+                    realm: "sandbox",
                     configureOptions: options =>
                     {
-                        options.ClientId = "development";
-                        options.ClientSecret = builder.Configuration.GetValue<string>("OpenIDConnectSettings:ClientSecret");
+                        options.ClientId = builder.Configuration.GetSection("ClientId").Value ?? "";
+                        options.ClientSecret = builder.Configuration.GetSection("ClientSecret").Value ?? "";
                         options.ResponseType = OpenIdConnectResponseType.Code;
                         options.ResponseMode = OpenIdConnectResponseMode.Query;
                         options.GetClaimsFromUserInfoEndpoint = true;

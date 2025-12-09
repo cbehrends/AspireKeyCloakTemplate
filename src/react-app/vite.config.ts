@@ -16,6 +16,20 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  server: {
+    proxy: {
+      '/bff': {
+        target: 'https://localhost:6001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/api': {
+        target: 'https://localhost:6001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
 
 export default config
