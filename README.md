@@ -1,4 +1,4 @@
-# DotNetCleanTemplate
+# AspireKeyCloakTemplate
 
 Opinionated .NET + React template repository containing:
 
@@ -23,11 +23,11 @@ Optional tools:
 
 ## Solution layout
 
-- `src/DotNetCleanTemplate.API` — ASP.NET API project
-- `src/DotNetCleanTemplate.Gateway` — Gateway (YARP reverse-proxy + auth)
+- `src/AspireKeyCloakTemplate.API` — ASP.NET API project
+- `src/AspireKeyCloakTemplate.Gateway` — Gateway (YARP reverse-proxy + auth)
 - `src/AppHost` — Host project that composes API and Gateway
-- `src/DotNetCleanTemplate.ServiceDefaults` — shared defaults and extensions
-- `DotNetCleanTemplate.Gateway.UnitTests` — unit tests (xUnit)
+- `src/AspireKeyCloakTemplate.ServiceDefaults` — shared defaults and extensions
+- `AspireKeyCloakTemplate.Gateway.UnitTests` — unit tests (xUnit)
 - `DotnetCleanTemplate.Gateway.IntegrationTests` — integration tests (xUnit + Playwright)
 - `src/react-app` — Vite + React frontend
 
@@ -50,7 +50,7 @@ This will restore NuGet packages and compile all projects targeting `net10.0`.
 To run individual projects use `dotnet run` from the project folder. Example – run the Gateway:
 
 ```bash
-cd src/DotNetCleanTemplate.Gateway
+cd src/AspireKeyCloakTemplate.Gateway
 dotnet run
 ```
 
@@ -76,7 +76,7 @@ dotnet test
 To run tests for a single test project:
 
 ```bash
-dotnet test DotNetCleanTemplate.Gateway.UnitTests/DotNetCleanTemplate.Gateway.UnitTests.csproj
+dotnet test AspireKeyCloakTemplate.Gateway.UnitTests/AspireKeyCloakTemplate.Gateway.UnitTests.csproj
 ```
 
 Integration tests reference Playwright; you may need to install Playwright browsers before running them. If you see Playwright-related errors, install browsers with:
@@ -127,5 +127,3 @@ If you want, I can also:
 - Add a small `dotnet` launch configuration for VS Code or Rider
 - Add a `README` specifically inside `src/react-app` describing the frontend in more detail
 - Add CI workflow examples (GitHub Actions) to build and test on push
-
-
