@@ -7,10 +7,10 @@
     <projectFile profileName="https">AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj</projectFile>
     <projectFile aspireProfileName="http">AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
     <projectFile aspireProfileName="https">AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
-    <projectFile profileName="http">AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj</projectFile>
-    <projectFile profileName="https">AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj</projectFile>
-    <projectFile aspireProfileName="http">AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
-    <projectFile aspireProfileName="https">AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
+    <projectFile profileName="http">DotNetCleanTemplate.API/DotNetCleanTemplate.API.csproj</projectFile>
+    <projectFile profileName="https">DotNetCleanTemplate.API/DotNetCleanTemplate.API.csproj</projectFile>
+    <projectFile aspireProfileName="http">DotNetCleanTemplate.AppHost/DotNetCleanTemplate.AppHost.csproj</projectFile>
+    <projectFile aspireProfileName="https">DotNetCleanTemplate.AppHost/DotNetCleanTemplate.AppHost.csproj</projectFile>
     <projectFile aspireProfileName="http">src/AppHost/AppHost.csproj</projectFile>
     <projectFile aspireProfileName="https">src/AppHost/AppHost.csproj</projectFile>
     <projectFile profileName="https">src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj</projectFile>
@@ -18,17 +18,19 @@
     <projectFile aspireProfileName="https">src/AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
     <projectFile profileName="http">src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj</projectFile>
     <projectFile profileName="https">src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj</projectFile>
-    <projectFile>src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj</projectFile>
-    <projectFile aspireProfileName="http">src/AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
-    <projectFile aspireProfileName="https">src/AspireKeyCloakTemplate.AppHost/AspireKeyCloakTemplate.AppHost.csproj</projectFile>
-    <projectFile profileName="http">src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj</projectFile>
-    <projectFile profileName="https">src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj</projectFile>
+    <projectFile>src/DotNetCleanTemplate.API/DotNetCleanTemplate.API.csproj</projectFile>
+    <projectFile aspireProfileName="http">src/DotNetCleanTemplate.AppHost/DotNetCleanTemplate.AppHost.csproj</projectFile>
+    <projectFile aspireProfileName="https">src/DotNetCleanTemplate.AppHost/DotNetCleanTemplate.AppHost.csproj</projectFile>
+    <projectFile profileName="http">src/DotNetCleanTemplate.Gateway/DotNetCleanTemplate.Gateway.csproj</projectFile>
+    <projectFile profileName="https">src/DotNetCleanTemplate.Gateway/DotNetCleanTemplate.Gateway.csproj</projectFile>
   </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c250319-d269-4c59-a5b0-2d19e54acc48" name="Changes" comment="Refactor project structure to integrate Aspire Keycloak template and enhance authentication mechanisms" />
+    <list default="true" id="0c250319-d269-4c59-a5b0-2d19e54acc48" name="Changes" comment="Refactor project structure to integrate Aspire Keycloak template and enhance authentication mechanisms">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,30 +62,16 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4c36893f59d7a4e82195fe14fa85e3c4ca479c81892a77f2d6bee08f41798470/NodeJSHostingExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5bd6892267269233dcf5c6191f357b0ba6c4257d1e757ca4d2fe93272b29d9b/Task.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/cea118513a410f660e578fe32bed95cf86457dd135e4b4632ca91eb4f7b/TypedResults.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/DotnetCleanTemplate.Gateway.IntegrationTests/Infrastructure/AspireManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/DotnetCleanTemplate.Gateway.IntegrationTests/Infrastructure/PlaywrightManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/DotnetCleanTemplate.Gateway.IntegrationTests/Infrastructure/PlaywrightTestBase.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AppHost/AppHost.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AppHost/realms.json" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Transformers/AddAntiforgeryTokenResponseTransform.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Transformers/AddBearrerTokenToHeadersrequestTransform.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Transformers/ValidateAntiforgerTokenRequestTransform.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Model/User.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/appsettings.Development.json" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/AspireKeyCloakTemplate.Gateway/appsettings.json" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/react-app/package-lock.json" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file:///usr/local/share/dotnet/sdk/10.0.100/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_10_default.globalconfig" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
@@ -325,7 +313,7 @@
       <workItem from="1764791613467" duration="30160000" />
       <workItem from="1764902947506" duration="1273000" />
       <workItem from="1765037201332" duration="29597000" />
-      <workItem from="1765291686929" duration="1654000" />
+      <workItem from="1765291686929" duration="1889000" />
     </task>
     <task id="LOCAL-00001" summary="Add initial project structure with API and configuration files">
       <option name="closed" value="true" />

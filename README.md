@@ -28,7 +28,7 @@ Optional tools:
 - `src/AppHost` — Host project that composes API and Gateway
 - `src/AspireKeyCloakTemplate.ServiceDefaults` — shared defaults and extensions
 - `AspireKeyCloakTemplate.Gateway.UnitTests` — unit tests (xUnit)
-- `DotnetCleanTemplate.Gateway.IntegrationTests` — integration tests (xUnit + Playwright)
+- `AspireKeyCloakTemplate.Gateway.IntegrationTests` — integration tests (xUnit + Playwright)
 - `src/react-app` — Vite + React frontend
 
 ---
