@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Docs/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Hosting/">
+    <Project Path="src/AspireKeyCloakTemplate.Gateway.IntegrationTests/AspireKeyCloakTemplate.Gateway.IntegrationTests.csproj" />
+    <Project Path="src/AspireKeyCloakTemplate.Gateway.UnitTests/AspireKeyCloakTemplate.Gateway.UnitTests.csproj" />
+    <Project Path="src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj" />
+    <Project Path="src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj" />
+  </Folder>
+  <Project Path="src/AppHost/AppHost.csproj" />
+  <Project Path="src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj" />
+</Solution>

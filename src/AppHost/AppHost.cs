@@ -16,7 +16,7 @@ var keyCloak = builder
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", password);
 
 var api = builder
-    .AddProject<Projects.DotNetCleanTemplate_API>("api", launchProfileName:"https")
+    .AddProject<Projects.AspireKeyCloakTemplate_API>("api", launchProfileName:"https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
     .WaitFor(keyCloak);
@@ -37,7 +37,7 @@ var reactApp = builder
     .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "react-app");
 
 builder
-    .AddProject<Projects.DotNetCleanTemplate_Gateway>("gateway", launchProfileName: "https")
+    .AddProject<Projects.AspireKeyCloakTemplate_Gateway>("gateway", launchProfileName: "https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
     .WithReference(reactApp)
