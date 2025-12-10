@@ -28,8 +28,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c250319-d269-4c59-a5b0-2d19e54acc48" name="Changes" comment="Refactor project structure to integrate Aspire Keycloak template and enhance authentication mechanisms">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="0c250319-d269-4c59-a5b0-2d19e54acc48" name="Changes" comment="chore: update README and workspace configuration to reflect Aspire Keycloak template integration">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.AspireKeyCloakTemplate/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AspireKeyCloakTemplate/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Directory.Packages.props" beforeDir="false" afterPath="$PROJECT_DIR$/Directory.Packages.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AppHost/AppHost.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/AppHost/AppHost.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AppHost/AppHost.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/AppHost/AppHost.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway.IntegrationTests/AspireKeyCloakTemplate.Gateway.IntegrationTests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway.IntegrationTests/AspireKeyCloakTemplate.Gateway.IntegrationTests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Core/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +47,7 @@
     <option name="firstShow" value="false" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="61" />
+    <option name="cachedIndexableFilesCount" value="77" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -115,7 +122,7 @@
     &quot;npm.install.executor&quot;: &quot;Run&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/coreybehrends/Projects/AspireKeyCloakTemplate/src/react-app/node_modules/typescript/lib&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/coreybehrends/Projects/DotNetCleanTemplate/src/react-app/node_modules/typescript/lib&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -313,7 +320,8 @@
       <workItem from="1764791613467" duration="30160000" />
       <workItem from="1764902947506" duration="1273000" />
       <workItem from="1765037201332" duration="29597000" />
-      <workItem from="1765291686929" duration="1889000" />
+      <workItem from="1765291686929" duration="5363000" />
+      <workItem from="1765304982706" duration="10203000" />
     </task>
     <task id="LOCAL-00001" summary="Add initial project structure with API and configuration files">
       <option name="closed" value="true" />
@@ -427,7 +435,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765292104017</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="chore: update README and workspace configuration to reflect Aspire Keycloak template integration">
+      <option name="closed" value="true" />
+      <created>1765293602182</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1765293602182</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -458,43 +474,8 @@
     <MESSAGE value="WIP" />
     <MESSAGE value="Auth working" />
     <MESSAGE value="Refactor project structure to integrate Aspire Keycloak template and enhance authentication mechanisms" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor project structure to integrate Aspire Keycloak template and enhance authentication mechanisms" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs</url>
-          <line>44</line>
-          <properties documentPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" containingFunctionPresentation="Lambda expression inside Method 'MapUserEndpoints'" />
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs</url>
-          <line>42</line>
-          <properties documentPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" containingFunctionPresentation="Lambda expression inside Method 'MapUserEndpoints'" />
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs</url>
-          <line>41</line>
-          <properties documentPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" containingFunctionPresentation="Lambda expression inside Method 'MapUserEndpoints'" />
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs</url>
-          <line>40</line>
-          <properties documentPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" containingFunctionPresentation="Lambda expression inside Method 'MapUserEndpoints'" />
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs</url>
-          <line>35</line>
-          <properties documentPath="$PROJECT_DIR$/src/AspireKeyCloakTemplate.Gateway/Features/Users/Endpoints/UserModule.cs" containingFunctionPresentation="Lambda expression inside Method 'MapUserEndpoints'" />
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="chore: update README and workspace configuration to reflect Aspire Keycloak template integration" />
+    <option name="LAST_COMMIT_MESSAGE" value="chore: update README and workspace configuration to reflect Aspire Keycloak template integration" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -27,14 +27,10 @@ var reactApp = builder
     .WithEndpoint(endpointName: "http", endpoint =>
     {
         // This sets the *exposed* port Aspire uses to communicate with the app
-        endpoint.Port = 3000; 
+        endpoint.Port = 3000;
     })
     // Also, tell the underlying Vite process to listen on this port
-    .WithEnvironment("PORT", "3000")
-    // Provide Keycloak configuration to the Vite app via env vars
-    .WithEnvironment("VITE_KEYCLOAK_URL", "http://localhost:8080")
-    .WithEnvironment("VITE_KEYCLOAK_REALM", "development")
-    .WithEnvironment("VITE_KEYCLOAK_CLIENT_ID", "react-app");
+    .WithEnvironment("PORT", "3000");
 
 builder
     .AddProject<Projects.AspireKeyCloakTemplate_Gateway>("gateway", launchProfileName: "https")

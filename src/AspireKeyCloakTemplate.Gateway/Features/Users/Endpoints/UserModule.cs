@@ -44,6 +44,7 @@ internal static partial class UserModule
 
             return TypedResults.Challenge(properties);
         }).AllowAnonymous();
+        
 
         builder.MapGet("/logout", (string? redirectUrl, HttpContext context) =>
         {
