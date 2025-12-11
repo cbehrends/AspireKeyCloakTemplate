@@ -1,45 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Menu, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { authStore, fetchAndStoreXsrfToken } from "../lib/auth-store";
+import { useState } from "react";
+import { useBffUser } from "@/features";
 
-function useBffUser() {
-	const [user, setUser] = useState<{
-		isAuthenticated: boolean;
-		name?: string;
-	} | null>(null);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		fetch("/bff/user", { credentials: "include" })
-			.then((res) => (res.ok ? res.json() : { isAuthenticated: false }))
-			.then(async (data) => {
-				setUser(data);
-				authStore.setState((state) => ({
-					...state,
-					isAuthenticated: data.isAuthenticated,
-				}));
-
-				// Fetch XSRF token after successful authentication
-				if (data.isAuthenticated) {
-					await fetchAndStoreXsrfToken();
-				}
-
-				setLoading(false);
-			})
-			.catch(() => {
-				setUser({ isAuthenticated: false });
-				authStore.setState((state) => ({ ...state, isAuthenticated: false }));
-				setLoading(false);
-			});
-	}, []);
-
-	return { user, loading };
-}
-
-export default function Header() {
+export default function NavigationHeader() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { user, loading } = useBffUser();
+
+	console.log("NavigationHeader - loading:", loading, "user:", user);
 
 	return (
 		<>
@@ -64,7 +32,9 @@ export default function Header() {
 					</h1>
 				</div>
 				<div>
-					{loading ? null : user?.isAuthenticated ? (
+					{loading ? (
+						<span className="text-gray-400">Loading...</span>
+					) : user?.isAuthenticated ? (
 						<>
 							<span className="mr-4">Hello, {user.name || "User"}</span>
 							<a

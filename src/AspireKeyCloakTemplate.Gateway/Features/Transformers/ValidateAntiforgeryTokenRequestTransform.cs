@@ -12,8 +12,17 @@ namespace AspireKeyCloakTemplate.Gateway.Features.Transformers;
 /// <see cref="IAntiforgery.ValidateRequestAsync"/> to ensure a valid antiforgery token is present.
 /// If validation fails the response status is set to 400 Bad Request and the failure is logged.
 /// </remarks>
-internal sealed partial class ValidateAntiforgeryTokenRequestTransform(IAntiforgery antiforgery, ILogger<ValidateAntiforgeryTokenRequestTransform> logger) : RequestTransform
+internal sealed partial class ValidateAntiforgeryTokenRequestTransform : RequestTransform
 {
+    private readonly IAntiforgery _antiforgery;
+    private readonly ILogger<ValidateAntiforgeryTokenRequestTransform> _logger;
+
+    public ValidateAntiforgeryTokenRequestTransform(IAntiforgery antiforgery, ILogger<ValidateAntiforgeryTokenRequestTransform> logger)
+    {
+        _antiforgery = antiforgery;
+        _logger = logger;
+        _logger.LogInformation("ValidateAntiforgeryTokenRequestTransform instance created");
+    }
     /// <summary>
     /// Applies the transform to the incoming request. Performs antiforgery validation for
     /// non-safe methods and non-protobuf requests.
@@ -22,29 +31,36 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform(IAntiforg
     /// <returns>A <see cref="ValueTask"/> that completes when validation succeeds or the response is modified on failure.</returns>
     public override async ValueTask ApplyAsync(RequestTransformContext context)
     {
+        _logger.LogInformation("ValidateAntiforgeryTokenRequestTransform.ApplyAsync called for {Method} {Path}", 
+            context.HttpContext.Request.Method, 
+            context.HttpContext.Request.Path.Value ?? string.Empty);
+
         if (context.HttpContext.Request.Method == HttpMethod.Get.Method ||
             context.HttpContext.Request.Method == HttpMethod.Head.Method ||
             context.HttpContext.Request.Method == HttpMethod.Options.Method ||
             context.HttpContext.Request.Method == HttpMethod.Trace.Method)
         {
+            _logger.LogInformation("Skipping validation - safe HTTP method: {Method}", context.HttpContext.Request.Method);
             return;
         }
 
         if (context.HttpContext.Request.Headers.ContentType.Contains("application/x-protobuf"))
         {
+            _logger.LogInformation("Skipping validation - protobuf content type");
             return;
         }
 
-        LogValidatingAntiforgeryToken(logger, context.HttpContext.Request.Path.Value ?? string.Empty);
+        LogValidatingAntiforgeryToken(_logger, context.HttpContext.Request.Path.Value ?? string.Empty);
 
         try
         {
-            await antiforgery.ValidateRequestAsync(context.HttpContext);
+            await _antiforgery.ValidateRequestAsync(context.HttpContext);
+            _logger.LogInformation("Antiforgery token validation succeeded for {Path}", context.HttpContext.Request.Path.Value ?? string.Empty);
         }
         catch (AntiforgeryValidationException ex)
         {
             context.HttpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            LogAntiforgeryTokenValidationFailed(logger, ex, context.HttpContext.Request.Path.Value ?? string.Empty);
+            LogAntiforgeryTokenValidationFailed(_logger, ex, context.HttpContext.Request.Path.Value ?? string.Empty);
         }
     }
 

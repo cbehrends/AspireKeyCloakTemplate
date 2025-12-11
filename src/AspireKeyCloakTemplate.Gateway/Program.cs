@@ -35,12 +35,12 @@ app.UseAuthorization();
 
 var bffGroup = app.MapGroup("bff");
 bffGroup.MapUserEndpoints();
-//
-// bffGroup.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext context) =>
-// {
-//     var tokens = antiforgery.GetAndStoreTokens(context);
-//     return Results.Ok(new { token = tokens.RequestToken });
-// });
+
+bffGroup.MapGet("/csrf", (IAntiforgery antiforgery, HttpContext context) =>
+{
+    var tokens = antiforgery.GetAndStoreTokens(context);
+    return Results.Ok(new { token = tokens.RequestToken });
+});
 
 app.MapReverseProxy();
 app.MapDefaultEndpoints();

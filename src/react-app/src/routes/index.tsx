@@ -1,20 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import {
-  Zap,
-  Server,
-  Route as RouteIcon,
-  Shield,
-  Waves,
-  Sparkles,
-} from 'lucide-react'
-
-export const Route = createFileRoute('/')({ component: App })
+import { createFileRoute } from "@tanstack/react-router";
+export const Route = createFileRoute("/")({ component: App });
 
 function App() {
-
-  return (
-    <div>
-      Woot woot! This is the root route!
-    </div>
-  )
+	return <div>Woot woot! This is the root route!</div>;
 }

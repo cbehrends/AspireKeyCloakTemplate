@@ -11,7 +11,7 @@ namespace AspireKeyCloakTemplate.Gateway.Features.Transformers;
 /// This transform checks that the current request is served by the SPA "catch-all"
 /// route and that the response content type contains "text/html". When those
 /// conditions are met it obtains an antiforgery token via <see cref="IAntiforgery"/>
-/// and appends it to the response cookies under the name "__Sandbox-X-XSRF-TOKEN".
+/// and appends it to the response cookies under the name "__AspireKeyCloakTemplate-X-XSRF-TOKEN".
 /// The cookie is writable from JavaScript (<see cref="CookieOptions.HttpOnly"/> = false),
 /// marked secure and SameSite.Strict to limit cross-site usage.
 /// </remarks>
@@ -32,12 +32,12 @@ internal sealed partial class AddAntiforgeryTokenResponseTransform(IAntiforgery 
 
         var tokenSet = antiforgery.GetAndStoreTokens(context.HttpContext);
         ArgumentNullException.ThrowIfNull(tokenSet.RequestToken);
-        context.HttpContext.Response.Cookies.Append("__Sandbox-X-XSRF-TOKEN", tokenSet.RequestToken, new CookieOptions
-        {
-            HttpOnly = false,
-            Secure = true,
-            SameSite = SameSiteMode.Strict,
-        });
+        // context.HttpContext.Response.Cookies.Append("__AspireKeyCloakTemplate-X-XSRF-TOKEN", tokenSet.RequestToken, new CookieOptions
+        // {
+        //     HttpOnly = true,
+        //     Secure = true,
+        //     SameSite = SameSiteMode.Strict,
+        // });
         if (context.HttpContext.Request.Path.Value != null)
             LogXsrfTokenAddedToResponseForRequestPathRequestpath(logger, context.HttpContext.Request.Path.Value);
         return ValueTask.CompletedTask;
