@@ -1,7 +1,7 @@
 import { EventClient } from "@tanstack/devtools-event-client";
 import { useEffect, useState } from "react";
 
-import { authStore } from "@/features";
+import { authStore } from "../store/auth-store";
 import type { AuthState } from "../types";
 
 type EventMap = {

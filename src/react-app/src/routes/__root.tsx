@@ -59,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							render: <TanStackRouterDevtoolsPanel />,
 						},
 						TanStackQueryDevtools,
-						authStoreDevtools
+						authStoreDevtools,
 					]}
 				/>
 				<Scripts />
