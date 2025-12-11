@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { authStore, fetchAndStoreXsrfToken } from "../lib/auth-store";
+import { authStore, fetchAndStoreXsrfToken } from "@/features";
 
 function useBffUser() {
 	const [user, setUser] = useState<{
