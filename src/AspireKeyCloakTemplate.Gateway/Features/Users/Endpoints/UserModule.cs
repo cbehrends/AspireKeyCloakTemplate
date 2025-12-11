@@ -48,6 +48,8 @@ internal static partial class UserModule
 
         builder.MapGet("/logout", (string? redirectUrl, HttpContext context) =>
         {
+            // Clear the cache
+            
             var properties = new AuthenticationProperties
             {
                 RedirectUri = context.BuildRedirectUrl(redirectUrl),

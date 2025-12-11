@@ -31,6 +31,10 @@ internal sealed partial class AddBearerTokenToHeadersTransform(ILogger<AddBearer
 
         // This also handles token refreshes
         var accessToken = await context.HttpContext.GetUserAccessTokenAsync();
+        
+        // Check if there's a token in cache. If not, add one. If so, use it.
+        // Set the cache expiration to a minute shorter than the token expiration.
+        
         if (!accessToken.Succeeded)
         {
             LogCouldNotGetAccessToken(logger,
