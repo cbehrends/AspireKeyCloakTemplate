@@ -32,12 +32,6 @@ internal sealed partial class AddAntiforgeryTokenResponseTransform(IAntiforgery 
 
         var tokenSet = antiforgery.GetAndStoreTokens(context.HttpContext);
         ArgumentNullException.ThrowIfNull(tokenSet.RequestToken);
-        // context.HttpContext.Response.Cookies.Append("__AspireKeyCloakTemplate-X-XSRF-TOKEN", tokenSet.RequestToken, new CookieOptions
-        // {
-        //     HttpOnly = true,
-        //     Secure = true,
-        //     SameSite = SameSiteMode.Strict,
-        // });
         if (context.HttpContext.Request.Path.Value != null)
             LogXsrfTokenAddedToResponseForRequestPathRequestpath(logger, context.HttpContext.Request.Path.Value);
         return ValueTask.CompletedTask;

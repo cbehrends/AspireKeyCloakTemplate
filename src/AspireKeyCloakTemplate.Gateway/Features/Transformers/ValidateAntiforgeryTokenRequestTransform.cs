@@ -21,7 +21,7 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
     {
         _antiforgery = antiforgery;
         _logger = logger;
-        _logger.LogInformation("ValidateAntiforgeryTokenRequestTransform instance created");
+        LogValidateantiforgerytokenrequesttransformInstanceCreated();
     }
     /// <summary>
     /// Applies the transform to the incoming request. Performs antiforgery validation for
@@ -31,22 +31,20 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
     /// <returns>A <see cref="ValueTask"/> that completes when validation succeeds or the response is modified on failure.</returns>
     public override async ValueTask ApplyAsync(RequestTransformContext context)
     {
-        _logger.LogInformation("ValidateAntiforgeryTokenRequestTransform.ApplyAsync called for {Method} {Path}", 
-            context.HttpContext.Request.Method, 
-            context.HttpContext.Request.Path.Value ?? string.Empty);
+        LogValidateantiforgerytokenrequesttransformApplyasyncCalledForMethodPath(context.HttpContext.Request.Method, context.HttpContext.Request.Path.Value ?? string.Empty);
 
         if (context.HttpContext.Request.Method == HttpMethod.Get.Method ||
             context.HttpContext.Request.Method == HttpMethod.Head.Method ||
             context.HttpContext.Request.Method == HttpMethod.Options.Method ||
             context.HttpContext.Request.Method == HttpMethod.Trace.Method)
         {
-            _logger.LogInformation("Skipping validation - safe HTTP method: {Method}", context.HttpContext.Request.Method);
+            LogSkippingValidationSafeHttpMethodMethod(context.HttpContext.Request.Method);
             return;
         }
 
         if (context.HttpContext.Request.Headers.ContentType.Contains("application/x-protobuf"))
         {
-            _logger.LogInformation("Skipping validation - protobuf content type");
+            LogSkippingValidationProtobufContentType();
             return;
         }
 
@@ -55,7 +53,6 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
         try
         {
             await _antiforgery.ValidateRequestAsync(context.HttpContext);
-            _logger.LogInformation("Antiforgery token validation succeeded for {Path}", context.HttpContext.Request.Path.Value ?? string.Empty);
         }
         catch (AntiforgeryValidationException ex)
         {
@@ -85,4 +82,16 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
         ILogger<ValidateAntiforgeryTokenRequestTransform> logger,
         Exception exception,
         string? requestPath);
+
+    [LoggerMessage(LogLevel.Information, "ValidateAntiforgeryTokenRequestTransform instance created")]
+    partial void LogValidateantiforgerytokenrequesttransformInstanceCreated();
+
+    [LoggerMessage(LogLevel.Information, "ValidateAntiforgeryTokenRequestTransform.ApplyAsync called for {Method} {Path}")]
+    partial void LogValidateantiforgerytokenrequesttransformApplyasyncCalledForMethodPath(string Method, string Path);
+
+    [LoggerMessage(LogLevel.Information, "Skipping validation - safe HTTP method: {Method}")]
+    partial void LogSkippingValidationSafeHttpMethodMethod(string Method);
+
+    [LoggerMessage(LogLevel.Information, "Skipping validation - protobuf content type")]
+    partial void LogSkippingValidationProtobufContentType();
 }
