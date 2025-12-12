@@ -18,14 +18,19 @@ class AuthStoreDevtoolsEventClient extends EventClient<EventMap> {
 
 const asdec = new AuthStoreDevtoolsEventClient();
 
-authStore.subscribe(() => {
-	asdec.emit("state", authStore.state);
-});
-
 function DevtoolPanel() {
 	const [state, setState] = useState<EventMap["auth-store-devtools:state"]>(
 		() => authStore.state,
 	);
+
+	useEffect(() => {
+		const unsubscribe = authStore.subscribe(() => {
+			asdec.emit("state", authStore.state);
+		});
+		return () => {
+			unsubscribe();
+		};
+	}, []);
 
 	useEffect(() => {
 		return asdec.on("state", (e) => setState(e.payload));
