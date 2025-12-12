@@ -1,7 +1,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var username = builder.AddParameter("admin");
-var password = builder.AddParameter("password", secret: true);
+var username = builder.AddParameter("username", "admin");
+var password = builder.AddParameter("password","password", secret: true);
 
 var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
@@ -23,7 +23,7 @@ var api = builder
 
 var reactApp = builder
     .AddViteApp("react-app", "../react-app")
-    .WithNpmPackageInstallation()
+    .WithPnpmPackageInstallation()
     .WithEndpoint(endpointName: "http", endpoint =>
     {
         // This sets the *exposed* port Aspire uses to communicate with the app

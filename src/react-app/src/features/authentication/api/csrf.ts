@@ -1,4 +1,4 @@
-import { authStore } from "../store/auth-store";
+import { authStore } from "@/features";
 
 export async function fetchAndStoreXsrfToken() {
 	try {

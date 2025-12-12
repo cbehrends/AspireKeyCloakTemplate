@@ -1,7 +1,6 @@
 // Barrel export for authentication feature
 
 export { fetchAndStoreXsrfToken } from "./api/csrf";
-export { fetchWithXsrf } from "./api/fetch-with-xsrf";
 export { fetchBffUser } from "./api/user";
 export { default as authStoreDevtools } from "./devtools/auth-store-devtools";
 export { useBffUser } from "./hooks/use-bff-user";
