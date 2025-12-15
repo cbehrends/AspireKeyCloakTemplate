@@ -324,7 +324,7 @@ public class AddBearerTokenToHeadersTransformTests
         
         // Provide an empty service provider to prevent NullReferenceException
         // when GetUserAccessTokenAsync is called
-        var serviceCollection = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+        var serviceCollection = new ServiceCollection();
         httpContext.RequestServices = serviceCollection.BuildServiceProvider();
 
         var proxyRequest = new HttpRequestMessage();
