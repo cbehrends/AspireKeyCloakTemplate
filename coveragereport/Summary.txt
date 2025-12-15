@@ -1,0 +1,33 @@
+Summary
+  Generated on: 12/15/2025 - 15:36:35
+  Coverage date: 12/15/2025 - 15:36:01
+  Parser: Cobertura
+  Assemblies: 2
+  Classes: 9
+  Files: 10
+  Line coverage: 37.2%
+  Covered lines: 190
+  Uncovered lines: 320
+  Coverable lines: 510
+  Total lines: 650
+  Branch coverage: 30.5% (36 of 118)
+  Covered branches: 36
+  Total branches: 118
+  Method coverage: 41.9% (13 of 31)
+  Full method coverage: 19.3% (6 of 31)
+  Covered methods: 13
+  Fully covered methods: 6
+  Total methods: 31
+
+AspireKeyCloakTemplate.Gateway                                                                    42.9%
+  AspireKeyCloakTemplate.Gateway.Features.Core.Extensions                                            0%
+  AspireKeyCloakTemplate.Gateway.Features.Transformers.AddAntiforgeryTokenResponseTransform       94.2%
+  AspireKeyCloakTemplate.Gateway.Features.Transformers.AddBearerTokenToHeadersTransform           10.7%
+  AspireKeyCloakTemplate.Gateway.Features.Transformers.ValidateAntiforgeryTokenRequestTransform   93.7%
+  AspireKeyCloakTemplate.Gateway.Features.Users.Endpoints.UserModule                                 0%
+  AspireKeyCloakTemplate.Gateway.Features.Users.Model.User                                           0%
+  AspireKeyCloakTemplate.Gateway.Features.Users.Model.UserClaim                                      0%
+  Program                                                                                            0%
+
+AspireKeyCloakTemplate.ServiceDefaults                                                               0%
+  AspireKeyCloakTemplate.ServiceDefaults.Extensions                                                  0%
