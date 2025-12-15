@@ -6,10 +6,10 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { authStoreDevtools } from "../features/authentication";
-import { NavigationHeader } from "../features/navigation";
-import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
-import appCss from "../styles.css?url";
+import { authStoreDevtools } from "@/features/authentication";
+import { NavigationHeader } from "@/features/navigation";
+import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools";
+import appCss from "@/styles.css?url";
 
 interface MyRouterContext {
 	queryClient: QueryClient;

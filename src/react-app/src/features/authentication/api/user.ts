@@ -1,4 +1,4 @@
-import type { BffUser } from "../types";
+import type { BffUser } from "@/features/authentication/types";
 
 export async function fetchBffUser(): Promise<BffUser> {
 	try {

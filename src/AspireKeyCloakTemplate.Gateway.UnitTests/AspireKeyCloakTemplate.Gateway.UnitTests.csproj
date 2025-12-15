@@ -21,9 +21,15 @@
     </PackageReference>
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="Shouldly" />
+    <PackageReference Include="Microsoft.AspNetCore.Antiforgery" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
+    <PackageReference Include="Yarp.ReverseProxy" />
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
   </ItemGroup>
+  
   <ItemGroup>
-    <Folder Include="Features\Transformers\" />
+    <ProjectReference Include="..\AspireKeyCloakTemplate.Gateway\AspireKeyCloakTemplate.Gateway.csproj" />
   </ItemGroup>
 
 </Project>

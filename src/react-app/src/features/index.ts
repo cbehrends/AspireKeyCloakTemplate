@@ -1,4 +1,4 @@
 // Main barrel export for all features
-export * from "./authentication";
-export * from "./header";
-export * from "./navigation";
+export * from "@/features/authentication";
+export * from "@/features/header";
+export * from "@/features/navigation";

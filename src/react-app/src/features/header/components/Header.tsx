@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { useBffUser } from "../hooks/use-bff-user";
+import { useBffUser } from "@/features/authentication/hooks/use-bff-user";
 
 export default function Header() {
 	const [isOpen, setIsOpen] = useState(false);

@@ -1,3 +1,3 @@
 // Barrel export for navigation feature
-import NavigationHeader from "./components/NavigationHeader";
+import NavigationHeader from "@/features/navigation/components/NavigationHeader";
 export { NavigationHeader };

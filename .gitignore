@@ -27,6 +27,12 @@ publish/**/*
 TestResults/
 *.trx
 
+# Code Coverage Reports
+coverage/
+*.opencover.xml
+.coverage
+.coveragerc
+
 # Rider / JetBrains
 .idea/
 .idea/*
