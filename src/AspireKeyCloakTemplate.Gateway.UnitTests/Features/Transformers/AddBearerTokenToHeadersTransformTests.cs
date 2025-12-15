@@ -1,9 +1,13 @@
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using AspireKeyCloakTemplate.Gateway.Features.Transformers;
+using Duende.AccessTokenManagement;
+using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
@@ -14,25 +18,21 @@ namespace AspireKeyCloakTemplate.Gateway.UnitTests.Features.Transformers;
 /// Unit tests for AddBearerTokenToHeadersTransform.
 /// These tests focus on the authentication check logic and HttpContext setup.
 /// 
-/// Note on testing approach and coverage:
+/// Testing approach:
 /// The GetUserAccessTokenAsync extension method from Duende.AccessTokenManagement internally
-/// uses IUserTokenManager which requires proper DI configuration with multiple services
-/// (IUserTokenStore, IUserTokenEndpointService, etc.). These unit tests focus on the
-/// authentication gate-keeping logic that can be tested in isolation without complex service setup.
+/// uses IUserTokenManager service. These tests mock IUserTokenManager to achieve full coverage
+/// of all code paths without requiring complex service chain setup.
 /// 
 /// Coverage achieved:
 /// - Authentication check (lines 27-30): ✓ Fully covered
-/// - Token retrieval failure path (lines 35-42): ✗ Requires IUserTokenManager service
-/// - Token retrieval success path (lines 44-45): ✗ Requires IUserTokenManager service
-/// 
-/// The success and failure paths for token retrieval are best tested through:
-/// 1. Integration tests with actual Duende services configured
-/// 2. End-to-end tests with real authentication flows
+/// - Token retrieval failure path (lines 35-42): ✓ Fully covered with IUserTokenManager mock
+/// - Token retrieval success path (lines 44-45): ✓ Fully covered with IUserTokenManager mock
 /// 
 /// This approach follows testing best practices by:
-/// - Testing what can be reliably unit tested (authentication gate)
-/// - Acknowledging dependencies that require integration testing (token management)
-/// - Avoiding brittle mocks of complex third-party service chains
+/// - Testing authentication gate-keeping logic in isolation
+/// - Mocking the direct dependency (IUserTokenManager) rather than the entire service chain
+/// - Verifying correct behavior for both success and failure scenarios
+/// - Using DefaultHttpContext with proper DI configuration for realistic test setup
 /// </summary>
 public class AddBearerTokenToHeadersTransformTests
 {
@@ -302,6 +302,153 @@ public class AddBearerTokenToHeadersTransformTests
         context.HttpContext.Request.Path.Value.ShouldBe(requestPath);
     }
 
+    [Fact]
+    public async Task ApplyAsync_WhenTokenRetrievalFails_ShouldLogErrorAndNotAddHeader()
+    {
+        // Arrange
+        const string requestPath = "/api/test";
+        const string errorCode = "token_expired";
+        const string errorDescription = "The access token has expired";
+        
+        var userTokenManager = Substitute.For<IUserTokenManager>();
+        var context = CreateRequestTransformContextWithServices(
+            isAuthenticated: true,
+            requestPath: requestPath,
+            configureServices: services => services.AddSingleton(userTokenManager));
+
+        // Configure the mock to return a failed result
+        var failedResult = new FailedResult(errorCode, errorDescription);
+        TokenResult<UserToken> tokenResultFailed = failedResult;
+        
+        userTokenManager
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .Returns(tokenResultFailed);
+
+        // Act
+        await _transform.ApplyAsync(context);
+
+        // Assert
+        context.ProxyRequest.Headers.Authorization.ShouldBeNull();
+        
+        var logs = _fakeLogger.Collector.GetSnapshot();
+        var errorLogs = logs.Where(l => l.Level == LogLevel.Error).ToList();
+        errorLogs.ShouldNotBeEmpty();
+        errorLogs.First().Message.ShouldContain("Could not get access token");
+        errorLogs.First().Message.ShouldContain(errorCode);
+        errorLogs.First().Message.ShouldContain(requestPath);
+        errorLogs.First().Message.ShouldContain(errorDescription);
+    }
+
+    [Fact]
+    public async Task ApplyAsync_WhenTokenRetrievalSucceeds_ShouldAddBearerTokenToHeaders()
+    {
+        // Arrange
+        const string expectedToken = "test-access-token-12345";
+        const string requestPath = "/api/users";
+        
+        var userTokenManager = Substitute.For<IUserTokenManager>();
+        var context = CreateRequestTransformContextWithServices(
+            isAuthenticated: true,
+            requestPath: requestPath,
+            configureServices: services => services.AddSingleton(userTokenManager));
+
+        // Configure the mock to return a successful result
+        var userToken = new UserToken
+        {
+            AccessToken = AccessToken.Parse(expectedToken),
+            ClientId = ClientId.Parse("test-client"),
+            AccessTokenType = AccessTokenType.Parse("Bearer"),
+            Expiration = DateTimeOffset.UtcNow.AddHours(1)
+        };
+        TokenResult<UserToken> tokenResultSuccess = userToken;
+        
+        userTokenManager
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .Returns(tokenResultSuccess);
+
+        // Act
+        await _transform.ApplyAsync(context);
+
+        // Assert
+        context.ProxyRequest.Headers.Authorization.ShouldNotBeNull();
+        context.ProxyRequest.Headers.Authorization!.Scheme.ShouldBe("Bearer");
+        context.ProxyRequest.Headers.Authorization.Parameter.ShouldBe(expectedToken);
+        
+        var logs = _fakeLogger.Collector.GetSnapshot();
+        var infoLogs = logs.Where(l => l.Level == LogLevel.Information).ToList();
+        infoLogs.ShouldNotBeEmpty();
+        infoLogs.First().Message.ShouldContain("Adding bearer token to request headers");
+        infoLogs.First().Message.ShouldContain(requestPath);
+    }
+
+    [Fact]
+    public async Task ApplyAsync_WhenTokenRetrievalFailsWithNullPath_ShouldLogErrorWithEmptyPath()
+    {
+        // Arrange
+        const string errorCode = "service_unavailable";
+        
+        var userTokenManager = Substitute.For<IUserTokenManager>();
+        var context = CreateRequestTransformContextWithServices(
+            isAuthenticated: true,
+            requestPath: null,
+            configureServices: services => services.AddSingleton(userTokenManager));
+
+        var failedResult = new FailedResult(errorCode, "Service temporarily unavailable");
+        TokenResult<UserToken> tokenResultFailed = failedResult;
+        
+        userTokenManager
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .Returns(tokenResultFailed);
+
+        // Act
+        await _transform.ApplyAsync(context);
+
+        // Assert
+        context.ProxyRequest.Headers.Authorization.ShouldBeNull();
+        
+        var logs = _fakeLogger.Collector.GetSnapshot();
+        var errorLogs = logs.Where(l => l.Level == LogLevel.Error).ToList();
+        errorLogs.ShouldNotBeEmpty();
+        errorLogs.First().Message.ShouldContain("Could not get access token");
+        errorLogs.First().Message.ShouldContain(errorCode);
+    }
+
+    [Fact]
+    public async Task ApplyAsync_WhenExistingAuthHeaderPresent_ShouldReplaceWithBearerToken()
+    {
+        // Arrange
+        const string newToken = "new-bearer-token";
+        
+        var userTokenManager = Substitute.For<IUserTokenManager>();
+        var context = CreateRequestTransformContextWithServices(
+            isAuthenticated: true,
+            configureServices: services => services.AddSingleton(userTokenManager));
+        
+        // Set an existing authorization header
+        context.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", "old-credentials");
+        
+        var userToken = new UserToken
+        {
+            AccessToken = AccessToken.Parse(newToken),
+            ClientId = ClientId.Parse("test-client"),
+            AccessTokenType = AccessTokenType.Parse("Bearer"),
+            Expiration = DateTimeOffset.UtcNow.AddHours(1)
+        };
+        TokenResult<UserToken> tokenResultSuccess = userToken;
+        
+        userTokenManager
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .Returns(tokenResultSuccess);
+
+        // Act
+        await _transform.ApplyAsync(context);
+
+        // Assert
+        context.ProxyRequest.Headers.Authorization.ShouldNotBeNull();
+        context.ProxyRequest.Headers.Authorization!.Scheme.ShouldBe("Bearer");
+        context.ProxyRequest.Headers.Authorization.Parameter.ShouldBe(newToken);
+    }
+
     // Helper methods
 
     private static RequestTransformContext CreateRequestTransformContext(
@@ -325,6 +472,38 @@ public class AddBearerTokenToHeadersTransformTests
         // Provide an empty service provider to prevent NullReferenceException
         // when GetUserAccessTokenAsync is called
         var serviceCollection = new ServiceCollection();
+        httpContext.RequestServices = serviceCollection.BuildServiceProvider();
+
+        var proxyRequest = new HttpRequestMessage();
+        return new RequestTransformContext 
+        { 
+            HttpContext = httpContext, 
+            ProxyRequest = proxyRequest 
+        };
+    }
+
+    private static RequestTransformContext CreateRequestTransformContextWithServices(
+        bool isAuthenticated,
+        string? requestPath = "/test",
+        bool hasIdentity = true,
+        Claim[]? claims = null,
+        Action<IServiceCollection>? configureServices = null)
+    {
+        var httpContext = new DefaultHttpContext();
+        
+        if (hasIdentity)
+        {
+            var identity = new ClaimsIdentity(
+                claims ?? [],
+                isAuthenticated ? "TestAuthType" : null);
+            httpContext.User = new ClaimsPrincipal(identity);
+        }
+        
+        httpContext.Request.Path = new PathString(requestPath);
+        
+        // Configure services if provided
+        var serviceCollection = new ServiceCollection();
+        configureServices?.Invoke(serviceCollection);
         httpContext.RequestServices = serviceCollection.BuildServiceProvider();
 
         var proxyRequest = new HttpRequestMessage();
