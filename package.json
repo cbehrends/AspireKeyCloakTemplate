@@ -1,30 +1,29 @@
 {
-}
-  "license": "MIT"
-  "author": "",
-  ],
-    "yarp"
-    "oidc",
-    "keycloak",
-    "react",
-    ".net",
-    "aspire",
-  "keywords": [
-  },
-    "url": "https://github.com/coreybehrends/DotNetCleanTemplate.git"
-    "type": "git",
-  "repository": {
-  },
-    "@semantic-release/exec": "^6.0.3"
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "semantic-release": "^24.0.0",
-  "devDependencies": {
-  },
-    "release": "semantic-release"
-  "scripts": {
-  "private": true,
-  "description": "Aspire-based .NET Core and React template with Keycloak OIDC and YARP gateway",
-  "version": "0.0.0",
   "name": "aspire-keycloak-template",
+  "version": "0.0.0",
+  "description": "Aspire-based .NET Core and React template with Keycloak OIDC and YARP gateway",
+  "private": true,
+  "license": "MIT",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coreybehrends/DotNetCleanTemplate.git"
+  },
+  "keywords": [
+    "aspire",
+    ".net",
+    "react",
+    "keycloak",
+    "oidc",
+    "yarp"
+  ],
+  "scripts": {
+    "release": "semantic-release"
+  },
+  "devDependencies": {
+    "semantic-release": "^24.0.0",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^6.0.3"
+  }
 
