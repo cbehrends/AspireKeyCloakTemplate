@@ -3,43 +3,20 @@ branches:
   main:
     regex: ^main$
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: true
-    is-mainline: true
   develop:
     regex: ^develop$
     mode: ContinuousDeployment
-    tag: rc
+    label: rc
     increment: Minor
-    prevent-increment-of-merged-branch-version: false
-    track-merge-target: true
-    tracks-release-branches: true
-    is-release-branch: false
-    is-mainline: false
   feature:
     regex: ^features?[/-]
     mode: ContinuousDeployment
-    tag: alpha
+    label: alpha
     increment: Inherit
-    prevent-increment-of-merged-branch-version: false
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: false
-    is-mainline: false
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDeployment
-    tag: pr
+    label: pr
     increment: Inherit
-    prevent-increment-of-merged-branch-version: false
-    track-merge-target: false
-    tracks-release-branches: false
-    is-release-branch: false
-    is-mainline: false
-ignore:
-  sha: []
-merge-message-formats: {}

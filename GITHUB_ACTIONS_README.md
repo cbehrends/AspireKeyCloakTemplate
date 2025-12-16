@@ -158,14 +158,14 @@ For registry push integration (deferred, add when ready):
 - `REGISTRY` — Container registry URL (e.g., `docker.io`, `ghcr.io`)
 - `REGISTRY_USERNAME` — Registry username
 - `REGISTRY_PASSWORD` — Registry password or token
-- `GITHUB_TOKEN` — Auto-provided by GitHub Actions (used for semantic-release Git operations)
+- `GITHUB_TOKEN` — Auto-provided by GitHub Actions (used for workflow operations)
 
 ### Required GitHub Permissions
 
 Add to repository settings:
 
-- **Workflow permissions**: `Read and write permissions`
-- **Workflow execution**: Allow `actions` to create and approve pull requests (for semantic-release)
+- **Workflow permissions**: `Read and write permissions` (if you plan to create tags from workflows)
+- **Workflow execution**: Standard permissions for running builds and tests
 
 ## Local Testing
 
