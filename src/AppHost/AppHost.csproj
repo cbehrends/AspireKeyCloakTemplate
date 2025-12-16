@@ -9,16 +9,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AspireKeyCloakTemplate.API\AspireKeyCloakTemplate.API.csproj" />
-        <ProjectReference Include="..\AspireKeyCloakTemplate.Gateway\AspireKeyCloakTemplate.Gateway.csproj" />
+        <ProjectReference Include="..\AspireKeyCloakTemplate.API\AspireKeyCloakTemplate.API.csproj"/>
+        <ProjectReference Include="..\AspireKeyCloakTemplate.Gateway\AspireKeyCloakTemplate.Gateway.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Aspire.Hosting.AppHost" />
-      <PackageReference Include="Aspire.Hosting.Keycloak" />
-      <PackageReference Include="Aspire.Hosting.NodeJs" />
-      <PackageReference Include="Aspire.Hosting.Yarp" />
-      <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions" />
+        <PackageReference Include="Aspire.Hosting.AppHost"/>
+        <PackageReference Include="Aspire.Hosting.Keycloak"/>
+        <PackageReference Include="Aspire.Hosting.NodeJs"/>
+        <PackageReference Include="Aspire.Hosting.Yarp"/>
+        <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions"/>
     </ItemGroup>
 
 </Project>

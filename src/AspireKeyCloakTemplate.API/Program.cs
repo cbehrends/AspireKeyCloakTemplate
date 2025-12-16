@@ -10,8 +10,8 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication()
     .AddKeycloakJwtBearer(
-        serviceName: "keycloak",
-        realm: "master",
+        "keycloak",
+        "master",
         options =>
         {
             options.Audience = "store.api";
@@ -19,10 +19,7 @@ builder.Services.AddAuthentication()
 
             // For development only - disable HTTPS metadata validation
             // In production, use explicit Authority configuration instead
-            if (builder.Environment.IsDevelopment())
-            {
-                options.RequireHttpsMetadata = false;
-            }
+            if (builder.Environment.IsDevelopment()) options.RequireHttpsMetadata = false;
         });
 
 var app = builder.Build();
@@ -30,10 +27,7 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
 app.UseHttpsRedirection();
 

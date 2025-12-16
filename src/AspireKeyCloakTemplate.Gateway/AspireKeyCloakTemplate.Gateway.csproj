@@ -8,19 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Aspire.Keycloak.Authentication" />
-        <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" />
-        <PackageReference Include="Yarp.ReverseProxy" />
+        <PackageReference Include="Aspire.Keycloak.Authentication"/>
+        <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect"/>
+        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp"/>
+        <PackageReference Include="Yarp.ReverseProxy"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AspireKeyCloakTemplate.ServiceDefaults\AspireKeyCloakTemplate.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\AspireKeyCloakTemplate.ServiceDefaults\AspireKeyCloakTemplate.ServiceDefaults.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\" />
+        <Folder Include="wwwroot\"/>
     </ItemGroup>
 
 </Project>

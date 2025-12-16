@@ -15,19 +15,17 @@ using Yarp.ReverseProxy.Transforms;
 namespace AspireKeyCloakTemplate.Gateway.UnitTests.Features.Transformers;
 
 /// <summary>
-/// Unit tests for AddBearerTokenToHeadersTransform.
-/// These tests focus on the authentication check logic and HttpContext setup.
-/// 
-/// Testing approach:
-/// The GetUserAccessTokenAsync extension method from Duende.AccessTokenManagement internally
-/// uses IUserTokenManager service. These tests mock IUserTokenManager to achieve full coverage
-/// of all code paths without requiring complex service chain setup.
-/// 
-/// This approach follows testing best practices by:
-/// - Testing authentication gate-keeping logic in isolation
-/// - Mocking the direct dependency (IUserTokenManager) rather than the entire service chain
-/// - Verifying correct behavior for both success and failure scenarios
-/// - Using DefaultHttpContext with proper DI configuration for realistic test setup
+///     Unit tests for AddBearerTokenToHeadersTransform.
+///     These tests focus on the authentication check logic and HttpContext setup.
+///     Testing approach:
+///     The GetUserAccessTokenAsync extension method from Duende.AccessTokenManagement internally
+///     uses IUserTokenManager service. These tests mock IUserTokenManager to achieve full coverage
+///     of all code paths without requiring complex service chain setup.
+///     This approach follows testing best practices by:
+///     - Testing authentication gate-keeping logic in isolation
+///     - Mocking the direct dependency (IUserTokenManager) rather than the entire service chain
+///     - Verifying correct behavior for both success and failure scenarios
+///     - Using DefaultHttpContext with proper DI configuration for realistic test setup
 /// </summary>
 public class AddBearerTokenToHeadersTransformTests
 {
@@ -44,14 +42,14 @@ public class AddBearerTokenToHeadersTransformTests
     public async Task ApplyAsync_WhenUserNotAuthenticated_ShouldSkipTokenAddition()
     {
         // Arrange
-        var context = CreateRequestTransformContext(isAuthenticated: false);
+        var context = CreateRequestTransformContext(false);
 
         // Act
         await _transform.ApplyAsync(context);
 
         // Assert
         context.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         // Verify no logs were written since we exited early
         var logs = _fakeLogger.Collector.GetSnapshot();
         logs.ShouldBeEmpty();
@@ -61,14 +59,14 @@ public class AddBearerTokenToHeadersTransformTests
     public async Task ApplyAsync_WhenUserIdentityIsNull_ShouldSkipTokenAddition()
     {
         // Arrange
-        var context = CreateRequestTransformContext(isAuthenticated: false, hasIdentity: false);
+        var context = CreateRequestTransformContext(false, hasIdentity: false);
 
         // Act
         await _transform.ApplyAsync(context);
 
         // Assert
         context.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         // Verify no logs were written since we exited early
         var logs = _fakeLogger.Collector.GetSnapshot();
         logs.ShouldBeEmpty();
@@ -78,14 +76,14 @@ public class AddBearerTokenToHeadersTransformTests
     public async Task ApplyAsync_WhenIdentityNotAuthenticatedWithNullAuthType_ShouldSkipTokenAddition()
     {
         // Arrange - Identity with no authentication type (IsAuthenticated = false)
-        var context = CreateRequestTransformContext(isAuthenticated: false, hasIdentity: true);
+        var context = CreateRequestTransformContext(false, hasIdentity: true);
 
         // Act
         await _transform.ApplyAsync(context);
 
         // Assert
         context.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         // Verify no processing occurred
         var logs = _fakeLogger.Collector.GetSnapshot();
         logs.ShouldBeEmpty();
@@ -96,14 +94,14 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange - Authenticated user but no IUserTokenManager service configured
         // This simulates the case where GetUserAccessTokenAsync will fail
-        var context = CreateRequestTransformContext(isAuthenticated: true, requestPath: "/api/test");
+        var context = CreateRequestTransformContext(true, "/api/test");
 
         // Act & Assert - Should throw InvalidOperationException when service is not registered
         var exception = await Should.ThrowAsync<InvalidOperationException>(async () =>
         {
             await _transform.ApplyAsync(context);
         });
-        
+
         exception.Message.ShouldContain("IUserTokenManager");
     }
 
@@ -112,14 +110,11 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            isAuthenticated: true,
-            requestPath: null);
+            true,
+            null);
 
         // Act & Assert - Will throw because IUserTokenManager is not configured
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
-        {
-            await _transform.ApplyAsync(context);
-        });
+        await Should.ThrowAsync<InvalidOperationException>(async () => { await _transform.ApplyAsync(context); });
     }
 
     [Fact]
@@ -127,14 +122,11 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            isAuthenticated: true,
-            requestPath: "");
+            true,
+            "");
 
         // Act & Assert - Will throw because IUserTokenManager is not configured
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
-        {
-            await _transform.ApplyAsync(context);
-        });
+        await Should.ThrowAsync<InvalidOperationException>(async () => { await _transform.ApplyAsync(context); });
     }
 
     [Fact]
@@ -147,9 +139,9 @@ public class AddBearerTokenToHeadersTransformTests
             new Claim(ClaimTypes.Name, "Test User"),
             new Claim(ClaimTypes.Email, "test@example.com")
         };
-        
+
         var context = CreateRequestTransformContext(
-            isAuthenticated: true,
+            true,
             claims: claims,
             requestPath: "/api/users");
 
@@ -158,7 +150,7 @@ public class AddBearerTokenToHeadersTransformTests
         {
             await _transform.ApplyAsync(context);
         });
-        
+
         exception.Message.ShouldContain("IUserTokenManager");
     }
 
@@ -170,22 +162,19 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            isAuthenticated: true,
-            requestPath: requestPath);
+            true,
+            requestPath);
 
         // Act & Assert - Will throw because IUserTokenManager is not configured
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
-        {
-            await _transform.ApplyAsync(context);
-        });
+        await Should.ThrowAsync<InvalidOperationException>(async () => { await _transform.ApplyAsync(context); });
     }
 
     [Fact]
     public async Task ApplyAsync_WithMultipleAuthenticatedCalls_ShouldAttemptTokenRetrievalForEach()
     {
         // Arrange
-        var context1 = CreateRequestTransformContext(isAuthenticated: true, requestPath: "/api/first");
-        var context2 = CreateRequestTransformContext(isAuthenticated: true, requestPath: "/api/second");
+        var context1 = CreateRequestTransformContext(true, "/api/first");
+        var context2 = CreateRequestTransformContext(true, "/api/second");
 
         // Act & Assert
         await Should.ThrowAsync<InvalidOperationException>(async () => await _transform.ApplyAsync(context1));
@@ -196,18 +185,18 @@ public class AddBearerTokenToHeadersTransformTests
     public async Task ApplyAsync_WithMixedAuthenticationStates_ShouldOnlyProcessAuthenticated()
     {
         // Arrange
-        var unauthenticatedContext = CreateRequestTransformContext(isAuthenticated: false);
-        var authenticatedContext = CreateRequestTransformContext(isAuthenticated: true, requestPath: "/api/test");
+        var unauthenticatedContext = CreateRequestTransformContext(false);
+        var authenticatedContext = CreateRequestTransformContext(true, "/api/test");
 
         // Act - Unauthenticated should not throw
         await _transform.ApplyAsync(unauthenticatedContext);
-        
+
         // Assert - Authenticated should throw
         await Should.ThrowAsync<InvalidOperationException>(async () =>
         {
             await _transform.ApplyAsync(authenticatedContext);
         });
-        
+
         // Verify unauthenticated call produced no logs
         var logs = _fakeLogger.Collector.GetSnapshot();
         logs.ShouldBeEmpty();
@@ -230,25 +219,22 @@ public class AddBearerTokenToHeadersTransformTests
         // This test documents the authentication check coverage and behavior
         // When user is not authenticated or identity is null, the transform
         // exits early without attempting token retrieval.
-        
+
         // Scenario 1: No identity
-        var context1 = CreateRequestTransformContext(isAuthenticated: false, hasIdentity: false);
+        var context1 = CreateRequestTransformContext(false, hasIdentity: false);
         await _transform.ApplyAsync(context1);
         context1.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         // Scenario 2: Identity exists but not authenticated
-        var context2 = CreateRequestTransformContext(isAuthenticated: false, hasIdentity: true);
+        var context2 = CreateRequestTransformContext(false, hasIdentity: true);
         await _transform.ApplyAsync(context2);
         context2.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         // Scenario 3: Authenticated - would proceed to token retrieval
         // (but throws InvalidOperationException due to missing IUserTokenManager service)
-        var context3 = CreateRequestTransformContext(isAuthenticated: true);
-        await Should.ThrowAsync<InvalidOperationException>(async () =>
-        {
-            await _transform.ApplyAsync(context3);
-        });
-        
+        var context3 = CreateRequestTransformContext(true);
+        await Should.ThrowAsync<InvalidOperationException>(async () => { await _transform.ApplyAsync(context3); });
+
         // All three scenarios behave as expected
         _fakeLogger.Collector.GetSnapshot().ShouldBeEmpty();
     }
@@ -258,7 +244,7 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         var claims = new[] { new Claim(ClaimTypes.Name, "TestUser") };
-        var context = CreateRequestTransformContext(isAuthenticated: true, claims: claims);
+        var context = CreateRequestTransformContext(true, claims: claims);
         var originalPrincipal = context.HttpContext.User;
 
         // Act & Assert - Will throw, but we can check user wasn't modified before the throw
@@ -281,7 +267,7 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         const string requestPath = "/api/test";
-        var context = CreateRequestTransformContext(isAuthenticated: true, requestPath: requestPath);
+        var context = CreateRequestTransformContext(true, requestPath);
 
         // Act & Assert - Will throw, but we can check request wasn't modified before the throw
         try
@@ -304,19 +290,20 @@ public class AddBearerTokenToHeadersTransformTests
         const string requestPath = "/api/test";
         const string errorCode = "token_expired";
         const string errorDescription = "The access token has expired";
-        
+
         var userTokenManager = Substitute.For<IUserTokenManager>();
         var context = CreateRequestTransformContextWithServices(
-            isAuthenticated: true,
-            requestPath: requestPath,
+            true,
+            requestPath,
             configureServices: services => services.AddSingleton(userTokenManager));
 
         // Configure the mock to return a failed result
         var failedResult = new FailedResult(errorCode, errorDescription);
         TokenResult<UserToken> tokenResultFailed = failedResult;
-        
+
         userTokenManager
-            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(),
+                Arg.Any<CancellationToken>())
             .Returns(tokenResultFailed);
 
         // Act
@@ -324,7 +311,7 @@ public class AddBearerTokenToHeadersTransformTests
 
         // Assert
         context.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         var logs = _fakeLogger.Collector.GetSnapshot();
         var errorLogs = logs.Where(l => l.Level == LogLevel.Error).ToList();
         errorLogs.ShouldNotBeEmpty();
@@ -340,11 +327,11 @@ public class AddBearerTokenToHeadersTransformTests
         // Arrange
         const string expectedToken = "test-access-token-12345";
         const string requestPath = "/api/users";
-        
+
         var userTokenManager = Substitute.For<IUserTokenManager>();
         var context = CreateRequestTransformContextWithServices(
-            isAuthenticated: true,
-            requestPath: requestPath,
+            true,
+            requestPath,
             configureServices: services => services.AddSingleton(userTokenManager));
 
         // Configure the mock to return a successful result
@@ -356,9 +343,10 @@ public class AddBearerTokenToHeadersTransformTests
             Expiration = DateTimeOffset.UtcNow.AddHours(1)
         };
         TokenResult<UserToken> tokenResultSuccess = userToken;
-        
+
         userTokenManager
-            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(),
+                Arg.Any<CancellationToken>())
             .Returns(tokenResultSuccess);
 
         // Act
@@ -368,7 +356,7 @@ public class AddBearerTokenToHeadersTransformTests
         context.ProxyRequest.Headers.Authorization.ShouldNotBeNull();
         context.ProxyRequest.Headers.Authorization!.Scheme.ShouldBe("Bearer");
         context.ProxyRequest.Headers.Authorization.Parameter.ShouldBe(expectedToken);
-        
+
         var logs = _fakeLogger.Collector.GetSnapshot();
         var infoLogs = logs.Where(l => l.Level == LogLevel.Information).ToList();
         infoLogs.ShouldNotBeEmpty();
@@ -381,18 +369,19 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         const string errorCode = "service_unavailable";
-        
+
         var userTokenManager = Substitute.For<IUserTokenManager>();
         var context = CreateRequestTransformContextWithServices(
-            isAuthenticated: true,
-            requestPath: null,
+            true,
+            null,
             configureServices: services => services.AddSingleton(userTokenManager));
 
         var failedResult = new FailedResult(errorCode, "Service temporarily unavailable");
         TokenResult<UserToken> tokenResultFailed = failedResult;
-        
+
         userTokenManager
-            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(),
+                Arg.Any<CancellationToken>())
             .Returns(tokenResultFailed);
 
         // Act
@@ -400,7 +389,7 @@ public class AddBearerTokenToHeadersTransformTests
 
         // Assert
         context.ProxyRequest.Headers.Authorization.ShouldBeNull();
-        
+
         var logs = _fakeLogger.Collector.GetSnapshot();
         var errorLogs = logs.Where(l => l.Level == LogLevel.Error).ToList();
         errorLogs.ShouldNotBeEmpty();
@@ -413,15 +402,15 @@ public class AddBearerTokenToHeadersTransformTests
     {
         // Arrange
         const string newToken = "new-bearer-token";
-        
+
         var userTokenManager = Substitute.For<IUserTokenManager>();
         var context = CreateRequestTransformContextWithServices(
-            isAuthenticated: true,
+            true,
             configureServices: services => services.AddSingleton(userTokenManager));
-        
+
         // Set an existing authorization header
         context.ProxyRequest.Headers.Authorization = new AuthenticationHeaderValue("Basic", "old-credentials");
-        
+
         var userToken = new UserToken
         {
             AccessToken = AccessToken.Parse(newToken),
@@ -430,9 +419,10 @@ public class AddBearerTokenToHeadersTransformTests
             Expiration = DateTimeOffset.UtcNow.AddHours(1)
         };
         TokenResult<UserToken> tokenResultSuccess = userToken;
-        
+
         userTokenManager
-            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(), Arg.Any<CancellationToken>())
+            .GetAccessTokenAsync(Arg.Any<ClaimsPrincipal>(), Arg.Any<UserTokenRequestParameters?>(),
+                Arg.Any<CancellationToken>())
             .Returns(tokenResultSuccess);
 
         // Act
@@ -453,7 +443,7 @@ public class AddBearerTokenToHeadersTransformTests
         Claim[]? claims = null)
     {
         var httpContext = new DefaultHttpContext();
-        
+
         if (hasIdentity)
         {
             var identity = new ClaimsIdentity(
@@ -461,19 +451,19 @@ public class AddBearerTokenToHeadersTransformTests
                 isAuthenticated ? "TestAuthType" : null);
             httpContext.User = new ClaimsPrincipal(identity);
         }
-        
+
         httpContext.Request.Path = new PathString(requestPath);
-        
+
         // Provide an empty service provider to prevent NullReferenceException
         // when GetUserAccessTokenAsync is called
         var serviceCollection = new ServiceCollection();
         httpContext.RequestServices = serviceCollection.BuildServiceProvider();
 
         var proxyRequest = new HttpRequestMessage();
-        return new RequestTransformContext 
-        { 
-            HttpContext = httpContext, 
-            ProxyRequest = proxyRequest 
+        return new RequestTransformContext
+        {
+            HttpContext = httpContext,
+            ProxyRequest = proxyRequest
         };
     }
 
@@ -485,7 +475,7 @@ public class AddBearerTokenToHeadersTransformTests
         Action<IServiceCollection>? configureServices = null)
     {
         var httpContext = new DefaultHttpContext();
-        
+
         if (hasIdentity)
         {
             var identity = new ClaimsIdentity(
@@ -493,19 +483,19 @@ public class AddBearerTokenToHeadersTransformTests
                 isAuthenticated ? "TestAuthType" : null);
             httpContext.User = new ClaimsPrincipal(identity);
         }
-        
+
         httpContext.Request.Path = new PathString(requestPath);
-        
+
         // Configure services if provided
         var serviceCollection = new ServiceCollection();
         configureServices?.Invoke(serviceCollection);
         httpContext.RequestServices = serviceCollection.BuildServiceProvider();
 
         var proxyRequest = new HttpRequestMessage();
-        return new RequestTransformContext 
-        { 
-            HttpContext = httpContext, 
-            ProxyRequest = proxyRequest 
+        return new RequestTransformContext
+        {
+            HttpContext = httpContext,
+            ProxyRequest = proxyRequest
         };
     }
 }

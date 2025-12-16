@@ -41,7 +41,10 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user", "offline_access"]
+      "realmRoles": [
+        "user",
+        "offline_access"
+      ]
     }
   ],
   "identityProviders": [],
@@ -93,10 +96,24 @@
           }
         }
       ],
-      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email", "openid"],
-      "optionalClientScopes": ["offline_access", "sandbox:all"],
-      "redirectUris": ["*"],
-      "webOrigins": ["*"]
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "email",
+        "openid"
+      ],
+      "optionalClientScopes": [
+        "offline_access",
+        "sandbox:all"
+      ],
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ]
     },
     {
       "clientId": "sandbox.api",

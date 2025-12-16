@@ -29,8 +29,8 @@ public class AddAntiforgeryTokenResponseTransformTests
     {
         // Arrange
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?>(),
-            contentType: "text/html"
+            new Dictionary<string, object?>(),
+            "text/html"
         );
 
         // Act
@@ -45,8 +45,8 @@ public class AddAntiforgeryTokenResponseTransformTests
     {
         // Arrange
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: "application/json"
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            "application/json"
         );
 
         // Act
@@ -61,8 +61,8 @@ public class AddAntiforgeryTokenResponseTransformTests
     {
         // Arrange
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: null
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            null
         );
 
         // Act
@@ -80,8 +80,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: "text/html; charset=utf-8"
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            "text/html; charset=utf-8"
         );
 
         // Act
@@ -102,8 +102,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: contentType
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            contentType
         );
 
         // Act
@@ -121,9 +121,9 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: "text/html",
-            requestPath: null
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            "text/html",
+            null
         );
 
         // Act
@@ -142,9 +142,9 @@ public class AddAntiforgeryTokenResponseTransformTests
 
         const string requestPath = "/index.html";
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: "text/html",
-            requestPath: requestPath
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            "text/html",
+            requestPath
         );
 
         // Act
@@ -166,8 +166,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", "value" } },
-            contentType: "text/html"
+            new Dictionary<string, object?> { { "catch-all", "value" } },
+            "text/html"
         );
 
         // Act
@@ -182,8 +182,8 @@ public class AddAntiforgeryTokenResponseTransformTests
     {
         // Arrange
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?>(),
-            contentType: "application/json"
+            new Dictionary<string, object?>(),
+            "application/json"
         );
 
         // Act
@@ -208,8 +208,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         };
 
         var context = CreateResponseTransformContext(
-            routeValues: routeValues,
-            contentType: "text/html"
+            routeValues,
+            "text/html"
         );
 
         // Act
@@ -227,8 +227,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", string.Empty } },
-            contentType: "text/html"
+            new Dictionary<string, object?> { { "catch-all", string.Empty } },
+            "text/html"
         );
 
         // Act
@@ -246,8 +246,8 @@ public class AddAntiforgeryTokenResponseTransformTests
         _antiforgerySubstitute.GetAndStoreTokens(Arg.Any<HttpContext>()).Returns(tokenSet);
 
         var context = CreateResponseTransformContext(
-            routeValues: new Dictionary<string, object?> { { "catch-all", null } },
-            contentType: "text/html"
+            new Dictionary<string, object?> { { "catch-all", null } },
+            "text/html"
         );
 
         // Act
@@ -267,17 +267,14 @@ public class AddAntiforgeryTokenResponseTransformTests
         var httpContext = new DefaultHttpContext();
         httpContext.Request.RouteValues = new RouteValueDictionary(routeValues);
         httpContext.Request.Path = new PathString(requestPath);
-        if (contentType != null)
-        {
-            httpContext.Response.ContentType = contentType;
-        }
+        if (contentType != null) httpContext.Response.ContentType = contentType;
 
         return new ResponseTransformContext { HttpContext = httpContext };
     }
 
-    private static AntiforgeryTokenSet CreateAntiforgeryTokenSet(string? requestToken = "test-token", string? formToken = "form-token")
+    private static AntiforgeryTokenSet CreateAntiforgeryTokenSet(string? requestToken = "test-token",
+        string? formToken = "form-token")
     {
         return new AntiforgeryTokenSet(requestToken, formToken, "header-name", "form-field-name");
     }
 }
-

@@ -25,14 +25,15 @@ internal static class Extensions
                 .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
                 .AddTransforms(builderContext =>
                 {
-                    builderContext.ResponseTransforms.Add(builderContext.Services.GetRequiredService<AddAntiforgeryTokenResponseTransform>());
-                    builderContext.RequestTransforms.Add(builderContext.Services.GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
+                    builderContext.ResponseTransforms.Add(builderContext.Services
+                        .GetRequiredService<AddAntiforgeryTokenResponseTransform>());
+                    builderContext.RequestTransforms.Add(builderContext.Services
+                        .GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
                     builderContext.RequestTransforms.Add(new RequestHeaderRemoveTransform("Cookie"));
 
                     if (!string.IsNullOrEmpty(builderContext.Route.AuthorizationPolicy))
-                    {
-                        builderContext.RequestTransforms.Add(builderContext.Services.GetRequiredService<AddBearerTokenToHeadersTransform>());
-                    }
+                        builderContext.RequestTransforms.Add(builderContext.Services
+                            .GetRequiredService<AddBearerTokenToHeadersTransform>());
                 })
                 .AddServiceDiscoveryDestinationResolver();
 
@@ -53,9 +54,9 @@ internal static class Extensions
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 })
                 .AddKeycloakOpenIdConnect(
-                    serviceName: "keycloak",
-                    realm: "sandbox",
-                    configureOptions: options =>
+                    "keycloak",
+                    "sandbox",
+                    options =>
                     {
                         options.ClientId = builder.Configuration.GetSection("ClientId").Value ?? "";
                         options.ClientSecret = builder.Configuration.GetSection("ClientSecret").Value ?? "";
@@ -69,7 +70,7 @@ internal static class Extensions
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             NameClaimType = ClaimTypes.NameIdentifier,
-                            RoleClaimType = ClaimTypes.Role,
+                            RoleClaimType = ClaimTypes.Role
                         };
 
                         options.Scope.Clear();
@@ -77,18 +78,16 @@ internal static class Extensions
                         options.Scope.Add("profile");
                         options.Scope.Add("email");
                         options.Scope.Add("offline_access");
-                        
-                        if (builder.Environment.IsDevelopment())
-                        {
-                            options.RequireHttpsMetadata = false;
-                        }
+
+                        if (builder.Environment.IsDevelopment()) options.RequireHttpsMetadata = false;
                     });
 
             builder.Services.AddAuthorization(options =>
             {
-                options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build();
+                options.DefaultPolicy =
+                    new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
+                        .RequireAuthenticatedUser()
+                        .Build();
             });
 
             return builder;
@@ -105,8 +104,8 @@ internal static class Extensions
                         : httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
                     return RateLimitPartition.GetFixedWindowLimiter(
-                        partitionKey: partitionKey,
-                        factory: _ => new FixedWindowRateLimiterOptions
+                        partitionKey,
+                        _ => new FixedWindowRateLimiterOptions
                         {
                             PermitLimit = 100,
                             Window = TimeSpan.FromMinutes(1),
@@ -126,14 +125,10 @@ internal static class Extensions
     {
         public string BuildRedirectUrl(string? redirectUrl)
         {
-            if (string.IsNullOrEmpty(redirectUrl))
-            {
-                redirectUrl = "/";
-            }
+            if (string.IsNullOrEmpty(redirectUrl)) redirectUrl = "/";
             if (redirectUrl.StartsWith('/'))
-            {
-                redirectUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase + redirectUrl;
-            }
+                redirectUrl = context.Request.Scheme + "://" + context.Request.Host + context.Request.PathBase +
+                              redirectUrl;
             return redirectUrl;
         }
     }

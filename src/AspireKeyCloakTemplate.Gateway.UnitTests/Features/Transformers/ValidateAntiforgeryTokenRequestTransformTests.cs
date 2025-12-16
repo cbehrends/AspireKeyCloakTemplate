@@ -28,7 +28,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithGetRequest_ShouldSkipValidation()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Get.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Get.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -41,7 +41,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithHeadRequest_ShouldSkipValidation()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Head.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Head.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -54,7 +54,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithOptionsRequest_ShouldSkipValidation()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Options.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Options.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -67,7 +67,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithTraceRequest_ShouldSkipValidation()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Trace.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Trace.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -81,8 +81,8 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
-            contentType: "application/x-protobuf"
+            HttpMethod.Post.Method,
+            "application/x-protobuf"
         );
 
         // Act
@@ -97,15 +97,16 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
-            contentType: "application/json"
+            HttpMethod.Post.Method,
+            "application/json"
         );
 
         // Act
         await _transform.ApplyAsync(context);
 
         // Assert
-        await _antiforgerySubstitute.Received(1).ValidateRequestAsync(Arg.Is<HttpContext>(ctx => ctx == context.HttpContext));
+        await _antiforgerySubstitute.Received(1)
+            .ValidateRequestAsync(Arg.Is<HttpContext>(ctx => ctx == context.HttpContext));
         context.HttpContext.Response.StatusCode.ShouldNotBe(StatusCodes.Status400BadRequest);
     }
 
@@ -113,7 +114,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithPutRequest_ShouldValidateToken()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Put.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Put.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -126,7 +127,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithPatchRequest_ShouldValidateToken()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Patch.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Patch.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -139,7 +140,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithDeleteRequest_ShouldValidateToken()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Delete.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Delete.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -155,7 +156,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
         var exception = new AntiforgeryValidationException("Invalid token");
         _antiforgerySubstitute.ValidateRequestAsync(Arg.Any<HttpContext>()).Throws(exception);
 
-        var context = CreateRequestTransformContext(method: HttpMethod.Post.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Post.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -173,7 +174,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
 
         const string requestPath = "/api/users";
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
+            HttpMethod.Post.Method,
             requestPath: requestPath
         );
 
@@ -191,7 +192,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithValidPostRequest_ShouldNotSetErrorStatus()
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: HttpMethod.Post.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Post.Method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -208,7 +209,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     public async Task ApplyAsync_WithNonSafeMethod_ShouldAttemptValidation(string method)
     {
         // Arrange
-        var context = CreateRequestTransformContext(method: method);
+        var context = CreateRequestTransformContext(method);
 
         // Act
         await _transform.ApplyAsync(context);
@@ -222,7 +223,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
+            HttpMethod.Post.Method,
             requestPath: null
         );
 
@@ -230,7 +231,8 @@ public class ValidateAntiforgeryTokenRequestTransformTests
         await _transform.ApplyAsync(context);
 
         // Assert
-        await _antiforgerySubstitute.Received(1).ValidateRequestAsync(Arg.Is<HttpContext>(ctx => ctx == context.HttpContext));
+        await _antiforgerySubstitute.Received(1)
+            .ValidateRequestAsync(Arg.Is<HttpContext>(ctx => ctx == context.HttpContext));
     }
 
     [Fact]
@@ -239,7 +241,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
         // Arrange
         const string requestPath = "/api/data";
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
+            HttpMethod.Post.Method,
             requestPath: requestPath
         );
 
@@ -257,8 +259,8 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     {
         // Arrange
         var context = CreateRequestTransformContext(
-            method: HttpMethod.Post.Method,
-            contentType: "application/x-protobuf"
+            HttpMethod.Post.Method,
+            "application/x-protobuf"
         );
 
         // Act
@@ -275,7 +277,7 @@ public class ValidateAntiforgeryTokenRequestTransformTests
         var exception = new AntiforgeryValidationException("Token mismatch");
         _antiforgerySubstitute.ValidateRequestAsync(Arg.Any<HttpContext>()).Throws(exception);
 
-        var context = CreateRequestTransformContext(method: HttpMethod.Post.Method);
+        var context = CreateRequestTransformContext(HttpMethod.Post.Method);
 
         // Act & Assert - Should not throw
         await _transform.ApplyAsync(context);
@@ -291,17 +293,10 @@ public class ValidateAntiforgeryTokenRequestTransformTests
     {
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Method = method;
-        if (requestPath != null)
-        {
-            httpContext.Request.Path = new PathString(requestPath);
-        }
-        if (contentType != null)
-        {
-            httpContext.Request.Headers.ContentType = contentType;
-        }
+        if (requestPath != null) httpContext.Request.Path = new PathString(requestPath);
+        if (contentType != null) httpContext.Request.Headers.ContentType = contentType;
 
         var proxyRequest = new HttpRequestMessage();
         return new RequestTransformContext { HttpContext = httpContext, ProxyRequest = proxyRequest };
     }
 }
-

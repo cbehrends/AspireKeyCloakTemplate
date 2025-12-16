@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace AspireKeyCloakTemplate.Gateway.Features.Users.Endpoints;
 
-internal static partial class UserModule
+internal static class UserModule
 {
     internal static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder builder)
     {
@@ -19,7 +19,7 @@ internal static partial class UserModule
                 {
                     IsAuthenticated = true,
                     Name = principal.FindFirstValue("name"),
-                    Claims = principal.Claims.Select(c => new UserClaim { Type = c.Type, Value = c.Value }),
+                    Claims = principal.Claims.Select(c => new UserClaim { Type = c.Type, Value = c.Value })
                 },
                 _ => new User
                 {
@@ -35,7 +35,7 @@ internal static partial class UserModule
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = context.BuildRedirectUrl(returnUrl),
+                RedirectUri = context.BuildRedirectUrl(returnUrl)
             };
 
             if (claimsChallenge == null) return TypedResults.Challenge(properties);
@@ -44,16 +44,17 @@ internal static partial class UserModule
 
             return TypedResults.Challenge(properties);
         }).AllowAnonymous();
-        
+
 
         builder.MapGet("/logout", (string? redirectUrl, HttpContext context) =>
         {
             var properties = new AuthenticationProperties
             {
-                RedirectUri = context.BuildRedirectUrl(redirectUrl),
+                RedirectUri = context.BuildRedirectUrl(redirectUrl)
             };
 
-            return TypedResults.SignOut(properties, [CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme]);
+            return TypedResults.SignOut(properties,
+                [CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme]);
         });
 
         return builder;
