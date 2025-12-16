@@ -60,6 +60,7 @@ jobs:
         with:
           node-version: "22"
           cache: "pnpm"
+          cache-dependency-path: "src/react-app/pnpm-lock.yaml"
 
 
       - name: Install dependencies
