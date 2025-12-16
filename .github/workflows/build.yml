@@ -11,38 +11,37 @@ on:
       - develop
 
 jobs:
-  semantic-release:
-    name: Semantic Release
+  gitversion:
+    name: Calculate Version
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+      contents: read
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
+      majorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v4.0.0
         with:
-          node-version: "22"
+          versionSpec: '6.x'
 
-      - name: Install semantic-release
-        run: npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github
-
-      - name: Run semantic-release
-        id: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v4.0.0
+        with:
+          useConfigFile: true
 
   build-react:
     name: Build React App
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,6 +82,8 @@ jobs:
   test-dotnet:
     name: Test .NET Projects
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -108,13 +109,13 @@ jobs:
   build-docker:
     name: Build Docker Images
     runs-on: ubuntu-latest
-    needs: [build-react, test-dotnet]
+    needs: [gitversion, build-react, test-dotnet]
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     permissions:
       contents: read
     outputs:
-      version: ${{ steps.version.outputs.version }}
-      version-tag: ${{ steps.version.outputs.version-tag }}
+      version: ${{ needs.gitversion.outputs.fullSemVer }}
+      version-tag: ${{ needs.gitversion.outputs.fullSemVer }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -124,17 +125,6 @@ jobs:
         with:
           name: react-build
           path: src/AspireKeyCloakTemplate.Gateway/wwwroot/
-
-      - name: Determine version
-        id: version
-        run: |
-          if [[ "${{ github.ref }}" == "refs/tags/"* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          else
-            VERSION="0.0.0-rc.${{ github.run_number }}-${{ github.sha }}"
-          fi
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "version-tag=$(echo ${VERSION} | sed 's/^v//')" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -146,7 +136,7 @@ jobs:
           file: ./Dockerfile.api
           push: false
           tags: |
-            api:${{ steps.version.outputs.version-tag }}
+            api:${{ needs.gitversion.outputs.fullSemVer }}
             api:latest
           outputs: type=docker,dest=/tmp/api.tar
           cache-from: type=gha
@@ -159,7 +149,7 @@ jobs:
           file: ./Dockerfile.gateway
           push: false
           tags: |
-            gateway:${{ steps.version.outputs.version-tag }}
+            gateway:${{ needs.gitversion.outputs.fullSemVer }}
             gateway:latest
           outputs: type=docker,dest=/tmp/gateway.tar
           cache-from: type=gha
@@ -176,8 +166,9 @@ jobs:
         run: |
           cat > /tmp/build-metadata.json <<EOF
           {
-            "version": "${{ steps.version.outputs.version }}",
-            "version-tag": "${{ steps.version.outputs.version-tag }}",
+            "version": "${{ needs.gitversion.outputs.fullSemVer }}",
+            "semVer": "${{ needs.gitversion.outputs.semVer }}",
+            "majorMinorPatch": "${{ needs.gitversion.outputs.majorMinorPatch }}",
             "commit-sha": "${{ github.sha }}",
             "branch": "${{ github.ref }}",
             "run-id": "${{ github.run_id }}"
@@ -190,4 +181,3 @@ jobs:
           name: build-metadata
           path: /tmp/build-metadata.json
           retention-days: 7
-
