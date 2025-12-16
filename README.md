@@ -152,15 +152,6 @@ Common scripts:
 
 ---
 
-## Documentation and Guidelines
-
-- [Copilot Instructions](./.copilot-instructions.md): Architecture, coding patterns, and best practices
-- [Naming Conventions](./NAMING_CONVENTIONS.md): C# and TypeScript/React naming
-- [Error Handling](./ERROR_HANDLING.md): Exception and error response patterns
-- [Caching Strategy](./CACHING_STRATEGY.md): Distributed and response caching
-- [Testing Guidelines](./TESTING_GUIDELINES.md): Shouldly, NSubstitute, Vitest, Playwright
-- [SonarQube Cloud Setup](./SONARQUBE_SETUP.md): Code coverage and code quality analysis
-- [Contributing](./CONTRIBUTING.md): Developer workflow and code of conduct
 
 ---
 
