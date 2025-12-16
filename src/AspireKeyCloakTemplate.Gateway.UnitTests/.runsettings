@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Configure XPlat Code Coverage for SonarQube Cloud -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat code coverage">
+        <Configuration>
+          <!-- Generate coverage in OpenCover format for SonarQube Cloud -->
+          <Format>opencover</Format>
+          <!-- Exclude test and generated code from coverage -->
+          <Exclude>[*]*.UnitTests.*,[*]*.Tests.*,[AspireKeyCloakTemplate.ServiceDefaults]*</Exclude>
+          <!-- Skip code coverage for particular attributes -->
+          <ExcludeByAttribute>System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <!-- Include source files for coverage analysis -->
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <!-- Generate single merged report file -->
+          <SingleReport>true</SingleReport>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
+

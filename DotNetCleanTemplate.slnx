@@ -1,8 +1,0 @@
-<Solution>
-  <Folder Name="/Hosting/">
-    <Project Path="src/DotNetCleanTemplate.Gateway/DotNetCleanTemplate.Gateway.csproj" />
-  </Folder>
-  <Project Path="AspireHost\AspireHost.csproj" />
-  <Project Path="DotNetCleanTemplate.ServiceDefaults/DotNetCleanTemplate.ServiceDefaults.csproj" />
-  <Project Path="src/DotNetCleanTemplate.API/DotNetCleanTemplate.API.csproj" />
-</Solution>

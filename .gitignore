@@ -1,4 +1,4 @@
-# Root .gitignore for DotNetCleanTemplate
+# Root .gitignore for AspireKeyCloakTemplate
 # Covers: Visual Studio, VS Code, Rider/WebStorm (JetBrains), macOS/Windows, .NET, NuGet, and a React/Node app
 
 # ----- Visual Studio -----
@@ -26,6 +26,12 @@ publish/**/*
 *.log
 TestResults/
 *.trx
+
+# Code Coverage Reports
+coverage/
+*.opencover.xml
+.coverage
+.coveragerc
 
 # Rider / JetBrains
 .idea/
@@ -138,4 +144,3 @@ appsettings.Local.json
 *.bak
 
 # End of .gitignore
-

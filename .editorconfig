@@ -1,0 +1,25 @@
+# EditorConfig for AspireKeyCloakTemplate
+# Top-most EditorConfig file
+root = true
+
+# C# files
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+
+# TypeScript/JavaScript/JSON
+[*.{ts,tsx,js,json}]
+indent_style = space
+indent_size = 2
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+# Markdown
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
