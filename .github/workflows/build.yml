@@ -15,9 +15,6 @@ jobs:
     name: Semantic Release
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-    outputs:
-      version: ${{ steps.release.outputs.version }}
-      published: ${{ steps.release.outputs.published }}
     permissions:
       contents: write
       issues: write
