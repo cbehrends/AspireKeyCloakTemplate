@@ -9,8 +9,9 @@
 
 ### 📚 Documentation
 1. **[GITHUB_ACTIONS_README.md](./GITHUB_ACTIONS_README.md)** — Comprehensive workflow guide
-2. **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** — Technical overview
-3. **[plan-githubActionsMultiContainerBuild.prompt.md](./plan-githubActionsMultiContainerBuild.prompt.md)** — Original planning document
+2. **[GITVERSION_GUIDE.md](./GITVERSION_GUIDE.md)** — GitVersion configuration and usage guide
+3. **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** — Technical overview
+4. **[plan-githubActionsMultiContainerBuild.prompt.md](./plan-githubActionsMultiContainerBuild.prompt.md)** — Original planning document
 
 ### 🔧 Configuration Files
 1. **[.github/workflows/build.yml](./.github/workflows/build.yml)** — Main CI/CD workflow

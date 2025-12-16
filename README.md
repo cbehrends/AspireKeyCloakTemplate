@@ -161,6 +161,8 @@ Common scripts:
 - [Testing Guidelines](./TESTING_GUIDELINES.md): Shouldly, NSubstitute, Vitest, Playwright
 - [SonarQube Cloud Setup](./SONARQUBE_SETUP.md): Code coverage and code quality analysis
 - [Contributing](./CONTRIBUTING.md): Developer workflow and code of conduct
+- [GitHub Actions](./GITHUB_ACTIONS_README.md): CI/CD workflow documentation
+- [GitVersion Guide](./GITVERSION_GUIDE.md): Automated versioning with GitVersion
 
 ---
 
