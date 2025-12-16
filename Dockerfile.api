@@ -1,0 +1,39 @@
+# Multi-stage build for AspireKeyCloakTemplate.API
+ENTRYPOINT ["dotnet", "AspireKeyCloakTemplate.API.dll"]
+
+EXPOSE 8080
+
+    CMD dotnet-healthcheck http://localhost:8080/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+# Health check
+
+COPY --from=builder /app/publish .
+# Copy published files from builder
+
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+# Runtime stage
+
+    --self-contained false
+    --no-restore \
+    -o /app/publish \
+    -c Release \
+RUN dotnet publish "src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj" \
+# Build and publish
+
+COPY . .
+# Copy remaining source code
+
+RUN dotnet restore "src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj"
+# Restore dependencies
+
+COPY ["src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj", "src/AspireKeyCloakTemplate.ServiceDefaults/"]
+COPY ["src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj", "src/AspireKeyCloakTemplate.API/"]
+COPY ["Directory.Packages.props", "."]
+# Copy project files
+
+WORKDIR /src
+
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
+

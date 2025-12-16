@@ -1,0 +1,42 @@
+# Multi-stage build for AspireKeyCloakTemplate.Gateway with embedded React app
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
+
+WORKDIR /src
+
+# Copy project files
+COPY ["Directory.Packages.props", "."]
+COPY ["src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj", "src/AspireKeyCloakTemplate.Gateway/"]
+COPY ["src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj", "src/AspireKeyCloakTemplate.ServiceDefaults/"]
+
+# Restore dependencies
+RUN dotnet restore "src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj"
+
+# Copy remaining source code
+COPY . .
+
+# Build and publish
+RUN dotnet publish "src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj" \
+    -c Release \
+    -o /app/publish \
+    --no-restore \
+    --self-contained false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+
+WORKDIR /app
+
+# Copy published files from builder
+COPY --from=builder /app/publish .
+
+# Ensure wwwroot directory exists for static files
+RUN mkdir -p wwwroot
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "AspireKeyCloakTemplate.Gateway.dll"]
+
