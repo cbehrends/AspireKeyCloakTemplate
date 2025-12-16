@@ -6,7 +6,7 @@ This document describes the automated build, test, and packaging pipeline for th
 
 The GitHub Actions workflow (`build.yml`) automates:
 
-1. **Semantic Versioning** — Automatic version bumping based on conventional commits using `semantic-release`
+1. **Semantic Versioning** — Automatic version calculation using `GitVersion` based on branching strategy
 2. **React App Build** — Compiles the Vite + React frontend and copies output to the Gateway's `wwwroot/`
 3. **.NET Unit Tests** — Runs unit tests for the Gateway project
 4. **Docker Image Builds** — Builds multi-stage Docker images for the API and Gateway services
@@ -21,66 +21,50 @@ The pipeline is triggered by:
 
 ## Versioning Strategy
 
-### Semantic Release
+### GitVersion
 
-The project uses `semantic-release` to automatically determine the next version based on conventional commits:
+The project uses `GitVersion` to automatically calculate versions based on the branching strategy:
 
-- **Patch bump** (e.g., `1.0.0` → `1.0.1`): `fix:` commits
-- **Minor bump** (e.g., `1.0.0` → `1.1.0`): `feat:` commits
-- **Major bump** (e.g., `1.0.0` → `2.0.0`): `BREAKING CHANGE:` in commit body
+- **main branch**: Stable releases (e.g., `1.2.3`) with no pre-release suffix
+- **develop branch**: Pre-release versions with `-rc` suffix (e.g., `1.2.3-rc.1`)
+- **feature branches**: Alpha versions with `-alpha` suffix (e.g., `1.2.3-alpha.1`)
+- **pull requests**: PR versions with `-pr` suffix (e.g., `1.2.3-pr.1`)
 
-### Branch-Based Versioning
+GitVersion uses the commit history and branch structure to determine version increments automatically. The versioning is configured in `GitVersion.yml` at the repository root.
 
-- **main branch**: Stable releases tagged as `v1.2.3` (no pre-release suffix)
-- **develop branch**: Pre-release versions tagged as `v1.2.3-rc.1`, `v1.2.3-rc.2`, etc.
-- **Other branches**: Ad-hoc versions using commit SHA (e.g., `0.0.0-rc.123-abc1234def`)
+## GitVersion Configuration
 
-## Conventional Commits
+The `GitVersion.yml` file at the repository root controls versioning behavior:
 
-All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+- **mode**: `ContinuousDelivery` for main branch, `ContinuousDeployment` for others
+- **branches**: Defines version increment strategy per branch
+  - `main`: Releases with patch increment
+  - `develop`: Pre-release with minor increment and `-rc` tag
+  - `feature`: Alpha versions with `-alpha` tag
+  - `pull-request`: PR versions with `-pr` tag
 
-```
-<type>[optional scope]: <description>
+### Version Calculation
 
-[optional body]
+GitVersion calculates version numbers by:
+1. Finding the last tag in the repository
+2. Analyzing commits since the last tag
+3. Applying branch-specific rules to determine the next version
+4. Adding pre-release tags based on branch configuration
 
-[optional footer(s)]
-```
+### Local Testing
 
-### Examples
+To test GitVersion locally:
 
 ```bash
-# Feature
-git commit -m "feat: add user authentication endpoint"
+# Install GitVersion (via dotnet tool)
+dotnet tool install --global GitVersion.Tool
 
-# Bug fix
-git commit -m "fix: correct token expiration validation"
+# Calculate version
+dotnet-gitversion
 
-# Documentation
-git commit -m "docs: update API deployment guide"
-
-# Breaking change
-git commit -m "feat: redesign auth middleware
-
-BREAKING CHANGE: auth middleware now requires OIDC provider config"
-
-# Chore / CI
-git commit -m "chore(deps): update Keycloak package"
-git commit -m "ci: add Docker build caching"
+# Display detailed info
+dotnet-gitversion /showvariable FullSemVer
 ```
-
-### Enforcing Conventional Commits (Optional Local Setup)
-
-To enforce conventional commits locally:
-
-1. **Install Husky and commitlint**:
-   ```bash
-   npm install --save-dev husky @commitlint/config-conventional @commitlint/cli
-   npx husky install
-   npx husky add .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
-   ```
-
-2. **The `commitlint.config.js` file is already configured** in the repo root.
 
 ## Docker Images
 
@@ -124,18 +108,17 @@ The workflow generates the following artifacts (retained for 1–7 days):
 
 ## Workflow Jobs
 
-### 1. `semantic-release` (main/develop pushes only)
+### 1. `gitversion`
 
-- Analyzes commits and determines version bump
-- Updates `CHANGELOG.md` and `package.json`
-- Creates Git tag (e.g., `v1.2.3`)
-- Outputs version to be used by subsequent jobs
+- Uses GitVersion to calculate the version based on branch and commit history
+- Outputs version information for use by subsequent jobs
 
-**Permissions**: `contents:write`, `issues:write`, `pull-requests:write`
+**Runs on**: Ubuntu 22.04
 
 **Outputs**:
-- `version` — Full semantic version (e.g., `v1.2.3`)
-- `published` — Boolean indicating if a new version was published
+- `semVer` — Semantic version (e.g., `1.2.3-rc.1`)
+- `fullSemVer` — Full semantic version with metadata (e.g., `1.2.3-rc.1+5`)
+- `majorMinorPatch` — Base version without pre-release or metadata (e.g., `1.2.3`)
 
 ### 2. `build-react`
 
@@ -157,9 +140,9 @@ The workflow generates the following artifacts (retained for 1–7 days):
 
 ### 4. `build-docker`
 
-- Depends on: `build-react`, `test-dotnet` (ensures they succeed before building)
+- Depends on: `gitversion`, `build-react`, `test-dotnet` (ensures they succeed before building)
 - Downloads React build artifact
-- Determines version tag (from git tag or commit SHA)
+- Uses version from GitVersion job output
 - Builds `api` and `gateway` Docker images using multi-stage Dockerfile
 - Uses Docker build cache for faster builds
 - Uploads Docker images and build metadata
@@ -210,11 +193,12 @@ docker build -f Dockerfile.gateway -t gateway:latest .
 
 ## Troubleshooting
 
-### semantic-release doesn't detect version bump
+### GitVersion doesn't calculate expected version
 
-- Ensure commits follow [Conventional Commits](https://www.conventionalcommits.org/)
-- Check `.releaserc.json` branch configuration matches your Git branch names
-- Verify `GITHUB_TOKEN` has sufficient permissions (`contents:write`)
+- Check `GitVersion.yml` configuration matches your branch names
+- Ensure repository has at least one tag (GitVersion needs a starting point)
+- Run `dotnet-gitversion` locally to debug version calculation
+- Verify `fetch-depth: 0` is set in checkout action (needed for full git history)
 
 ### React build fails
 
@@ -247,8 +231,8 @@ When ready to publish images:
 
 ## Resources
 
-- [Conventional Commits](https://www.conventionalcommits.org/)
-- [semantic-release Documentation](https://semantic-release.gitbook.io/)
+- [GitVersion Documentation](https://gitversion.net/)
+- [GitVersion Configuration](https://gitversion.net/docs/reference/configuration)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Docker Best Practices](https://docs.docker.com/develop/dev-best-practices/)
 

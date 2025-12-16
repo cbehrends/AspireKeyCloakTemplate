@@ -14,7 +14,7 @@
 
 ### 🔧 Configuration Files
 1. **[.github/workflows/build.yml](./.github/workflows/build.yml)** — Main CI/CD workflow
-2. **[.releaserc.json](./.releaserc.json)** — semantic-release configuration
+2. **[GitVersion.yml](./GitVersion.yml)** — GitVersion configuration for versioning
 3. **[package.json](./package.json)** — Root Node.js manifest
 4. **[commitlint.config.js](./commitlint.config.js)** — Conventional commits rules
 5. **[.husky/commit-msg](./.husky/commit-msg)** — Git commit hook
@@ -51,7 +51,7 @@
 
 ### ✅ Completed
 - [x] GitHub Actions workflow created (`.github/workflows/build.yml`)
-- [x] semantic-release configured (`.releaserc.json`)
+- [x] GitVersion configured (`GitVersion.yml`)
 - [x] Docker configurations created (`Dockerfile.api`, `Dockerfile.gateway`)
 - [x] Conventional commits support added (`commitlint.config.js`)
 - [x] Git hooks configured (`.husky/commit-msg`)
@@ -76,8 +76,8 @@
 
 | Feature | Status | Details |
 |---------|--------|---------|
-| **Semantic Versioning** | ✅ Complete | Auto-detects version from commits |
-| **Pre-Release Tags** | ✅ Complete | `.rc` suffix for non-production builds |
+| **Semantic Versioning** | ✅ Complete | GitVersion calculates version from branch strategy |
+| **Pre-Release Tags** | ✅ Complete | `-rc`, `-alpha`, `-pr` suffixes based on branch |
 | **React Build** | ✅ Complete | Vite build → copies to Gateway wwwroot |
 | **.NET Testing** | ✅ Complete | Unit tests run automatically |
 | **Docker Builds** | ✅ Complete | Multi-stage, lean images |
@@ -98,7 +98,7 @@
     ┌────────┴────────┐
     │                 │
     ▼                 ▼
-semantic-release  (parallel)
+gitversion        (parallel)
     │              build-react
     │              test-dotnet
     │                 │
@@ -120,9 +120,9 @@ semantic-release  (parallel)
 
 | Trigger | Branch | Action |
 |---------|--------|--------|
-| **Push** | `main` | semantic-release + build + test + Docker (stable tag) |
-| **Push** | `develop` | build + test + Docker (pre-release tag) |
-| **Pull Request** | any | build + test (no Docker push) |
+| **Push** | `main` | GitVersion + build + test + Docker (stable tag) |
+| **Push** | `develop` | GitVersion + build + test + Docker (pre-release tag) |
+| **Pull Request** | any | GitVersion + build + test (no Docker push) |
 
 ---
 
@@ -188,7 +188,7 @@ Go to GitHub **Actions** tab and watch build execute.
 
 ### Configuration (Root)
 ```
-.releaserc.json              semantic-release config
+GitVersion.yml               GitVersion configuration
 package.json                 Root Node.js manifest
 commitlint.config.js         Conventional commits rules
 .gitignore                   Updated with build artifacts
@@ -229,13 +229,10 @@ plan-githubActionsMultiContainerBuild.prompt.md  Original plan
 A: GitHub → Actions tab → "Build & Package" workflow
 
 **Q: How do I trigger a release?**  
-A: Push a commit with `feat:` to `main` branch. semantic-release handles the rest.
+A: Push to the `main` branch. GitVersion will calculate the version based on the branch strategy.
 
-**Q: What if I make a mistake in my commit message?**  
-A: commitlint will reject it. Amend with `git commit --amend` and push again.
-
-**Q: Can I manually create a release?**  
-A: Yes, with `git tag v1.2.3 && git push origin v1.2.3` on `main`.
+**Q: Can I manually create a version tag?**  
+A: Yes, with `git tag 1.2.3 && git push origin 1.2.3` on `main`. GitVersion will use this as the base version.
 
 **Q: Do I need to install anything locally?**  
 A: Optional: `npm install && npx husky install` for local commit hooks. Not required for CI.
