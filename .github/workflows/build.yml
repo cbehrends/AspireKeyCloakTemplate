@@ -140,16 +140,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build Gateway image
+      - name: Build BFF image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile.gateway
+          file: ./Dockerfile.bff
           push: false
           tags: |
-            gateway:${{ needs.gitversion.outputs.fullSemVer }}
-            gateway:latest
-          outputs: type=docker,dest=/tmp/gateway.tar
+            bff:${{ needs.gitversion.outputs.fullSemVer }}
+            bff:latest
+          outputs: type=docker,dest=/tmp/bff.tar
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
