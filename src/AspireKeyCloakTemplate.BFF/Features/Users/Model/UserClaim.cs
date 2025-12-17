@@ -1,4 +1,4 @@
-namespace AspireKeyCloakTemplate.Gateway.Features.Users.Model;
+namespace AspireKeyCloakTemplate.BFF.Features.Users.Model;
 
 internal sealed class UserClaim
 {

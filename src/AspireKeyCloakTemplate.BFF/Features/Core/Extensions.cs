@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using System.Threading.RateLimiting;
-using AspireKeyCloakTemplate.Gateway.Features.Transformers;
+using AspireKeyCloakTemplate.BFF.Features.Transformers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.Gateway.Features.Core;
+namespace AspireKeyCloakTemplate.BFF.Features.Core;
 
 internal static class Extensions
 {
@@ -23,7 +23,7 @@ internal static class Extensions
             builder.Services.AddOpenTelemetry()
                 .WithMetrics(metrics =>
                 {
-                    metrics.AddMeter("AspireKeyCloakTemplate.Gateway")
+                    metrics.AddMeter("AspireKeyCloakTemplate.BFF")
                         .AddRuntimeInstrumentation()
                         .AddAspNetCoreInstrumentation();
                 });

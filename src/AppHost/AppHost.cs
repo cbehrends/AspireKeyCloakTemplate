@@ -36,7 +36,7 @@ var reactApp = builder
     .WithEnvironment("PORT", "3000");
 
 builder
-    .AddProject<AspireKeyCloakTemplate_Gateway>("gateway", "https")
+    .AddProject<AspireKeyCloakTemplate_BFF>("bff", "https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
     .WithReference(reactApp)

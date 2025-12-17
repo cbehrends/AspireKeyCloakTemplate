@@ -1,11 +1,11 @@
 using System.Security.Claims;
-using AspireKeyCloakTemplate.Gateway.Features.Core;
-using AspireKeyCloakTemplate.Gateway.Features.Users.Model;
+using AspireKeyCloakTemplate.BFF.Features.Users.Model;
+using AspireKeyCloakTemplate.BFF.Features.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
-namespace AspireKeyCloakTemplate.Gateway.Features.Users.Endpoints;
+namespace AspireKeyCloakTemplate.BFF.Features.Users.Endpoints;
 
 internal static class UserModule
 {

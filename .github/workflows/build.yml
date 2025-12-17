@@ -65,16 +65,16 @@ jobs:
         working-directory: src/react-app
         run: pnpm run build
 
-      - name: Copy build to Gateway wwwroot
+      - name: Copy build to BFF wwwroot
         run: |
-          mkdir -p src/AspireKeyCloakTemplate.Gateway/wwwroot
-          cp -r src/react-app/dist/* src/AspireKeyCloakTemplate.Gateway/wwwroot/
+          mkdir -p src/AspireKeyCloakTemplate.BFF/wwwroot
+          cp -r src/react-app/dist/* src/AspireKeyCloakTemplate.BFF/wwwroot/
 
       - name: Upload React build
         uses: actions/upload-artifact@v4
         with:
           name: react-build
-          path: src/AspireKeyCloakTemplate.Gateway/wwwroot/
+          path: src/AspireKeyCloakTemplate.BFF/wwwroot/
           retention-days: 1
 
   test-dotnet:
@@ -95,7 +95,7 @@ jobs:
         run: dotnet restore
 
       - name: Run unit tests
-        run: dotnet test src/AspireKeyCloakTemplate.Gateway.UnitTests/AspireKeyCloakTemplate.Gateway.UnitTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test src/AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
       - name: Upload test results
         if: always()
@@ -122,7 +122,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: react-build
-          path: src/AspireKeyCloakTemplate.Gateway/wwwroot/
+          path: src/AspireKeyCloakTemplate.BFF/wwwroot/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

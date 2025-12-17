@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AspireKeyCloakTemplate.Gateway\AspireKeyCloakTemplate.Gateway.csproj"/>
+        <ProjectReference Include="..\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj" />
     </ItemGroup>
 
 </Project>

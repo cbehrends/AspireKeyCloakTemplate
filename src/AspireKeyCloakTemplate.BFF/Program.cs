@@ -1,5 +1,5 @@
-using AspireKeyCloakTemplate.Gateway.Features.Core;
-using AspireKeyCloakTemplate.Gateway.Features.Users.Endpoints;
+using AspireKeyCloakTemplate.BFF.Features.Core;
+using AspireKeyCloakTemplate.BFF.Features.Users.Endpoints;
 using AspireKeyCloakTemplate.ServiceDefaults;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Antiforgery;

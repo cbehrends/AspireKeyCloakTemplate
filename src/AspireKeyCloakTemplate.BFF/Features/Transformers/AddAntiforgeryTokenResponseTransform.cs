@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Antiforgery;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.Gateway.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.Features.Transformers;
 
 /// <summary>
 ///     Response transform that adds an antiforgery (XSRF) token cookie for HTML responses

@@ -2,7 +2,7 @@ using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Antiforgery;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.Gateway.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.Features.Transformers;
 
 /// <summary>
 ///     Request transform that validates antiforgery (XSRF) tokens on non-safe HTTP methods.
@@ -14,17 +14,17 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
     private readonly ILogger<ValidateAntiforgeryTokenRequestTransform> _logger;
 
     // --- OpenTelemetry Instrumentation ---
-    private static readonly Meter Meter = new("AspireKeyCloakTemplate.Gateway", "1.0.0");
+    private static readonly Meter Meter = new("AspireKeyCloakTemplate.BFF", "1.0.0");
     
     private static readonly Counter<long> ValidationFailuresCounter = 
         Meter.CreateCounter<long>(
-            "gateway.antiforgery.failures", 
+            "bff.antiforgery.failures", 
             unit: "{failures}", 
             description: "Number of failed antiforgery validations");
 
     private static readonly Histogram<double> ValidationDuration = 
         Meter.CreateHistogram<double>(
-            "gateway.antiforgery.duration", 
+            "bff.antiforgery.duration", 
             unit: "ms", 
             description: "Duration of antiforgery validation processing");
 

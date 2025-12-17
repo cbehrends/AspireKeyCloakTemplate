@@ -1,4 +1,4 @@
-using AspireKeyCloakTemplate.Gateway.Features.Transformers;
+using AspireKeyCloakTemplate.BFF.Features.Transformers;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -9,7 +9,7 @@ using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.Gateway.UnitTests.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
 
 public class AddAntiforgeryTokenResponseTransformTests
 {
