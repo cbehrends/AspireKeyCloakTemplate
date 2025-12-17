@@ -2,10 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { Home, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useBffUser } from "@/features/authentication/hooks/use-bff-user";
+import { logout } from "@/features/authentication/api/user";
 
 export default function Header() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { user, loading } = useBffUser();
+
+	const handleLogout = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		logout();
+	};
 
 	return (
 		<>
@@ -33,12 +39,12 @@ export default function Header() {
 					{loading ? null : user?.isAuthenticated ? (
 						<>
 							<span className="mr-4">Hello, {user.name || "User"}</span>
-							<a
-								href="/bff/logout"
-								className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block"
+							<button
+								onClick={handleLogout}
+								className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
 							>
 								Logout
-							</a>
+							</button>
 						</>
 					) : (
 						<a
