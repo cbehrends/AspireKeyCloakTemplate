@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Caching.Distributed;
@@ -8,12 +9,40 @@ namespace AspireKeyCloakTemplate.Gateway.Features.Core;
 ///     Implements server-side storage of authentication tickets using IDistributedCache.
 ///     This reduces cookie size by storing only a session identifier in the cookie while
 ///     keeping tokens and claims server-side.
+///     Instrumented with OpenTelemetry metrics for cache hit/miss tracking.
 /// </summary>
 internal sealed partial class DistributedCacheTicketStore(
     IDistributedCache cache,
     ILogger<DistributedCacheTicketStore> logger) : ITicketStore
 {
     private const string KeyPrefix = "AuthTicket-";
+
+    // --- OpenTelemetry Instrumentation ---
+    private static readonly Meter Meter = new("AspireKeyCloakTemplate.Gateway", "1.0.0");
+    
+    private static readonly Counter<long> CacheHitsCounter = 
+        Meter.CreateCounter<long>(
+            "gateway.auth_cache.hits", 
+            unit: "{hits}", 
+            description: "Number of authentication ticket cache hits");
+
+    private static readonly Counter<long> CacheMissesCounter = 
+        Meter.CreateCounter<long>(
+            "gateway.auth_cache.misses", 
+            unit: "{misses}", 
+            description: "Number of authentication ticket cache misses");
+
+    private static readonly Counter<long> CacheStoresCounter = 
+        Meter.CreateCounter<long>(
+            "gateway.auth_cache.stores", 
+            unit: "{stores}", 
+            description: "Number of authentication tickets stored");
+
+    private static readonly Counter<long> CacheRemovalsCounter = 
+        Meter.CreateCounter<long>(
+            "gateway.auth_cache.removals", 
+            unit: "{removals}", 
+            description: "Number of authentication tickets removed from cache");
 
     /// <summary>
     ///     Stores an authentication ticket in the distributed cache and returns a unique key.
@@ -24,6 +53,7 @@ internal sealed partial class DistributedCacheTicketStore(
     {
         var key = KeyPrefix + Guid.NewGuid().ToString("N");
         await RenewAsync(key, ticket);
+        CacheStoresCounter.Add(1);
         LogTicketStored(logger, key, ticket.Principal.Identity?.Name ?? "unknown");
         return key;
     }
@@ -63,10 +93,12 @@ internal sealed partial class DistributedCacheTicketStore(
         var bytes = await cache.GetAsync(key);
         if (bytes == null)
         {
+            CacheMissesCounter.Add(1);
             LogTicketNotFound(logger, key);
             return null;
         }
 
+        CacheHitsCounter.Add(1);
         var ticket = TicketSerializer.Default.Deserialize(bytes);
         LogTicketRetrieved(logger, key, ticket?.Principal.Identity?.Name ?? "unknown");
         return ticket;
@@ -79,6 +111,7 @@ internal sealed partial class DistributedCacheTicketStore(
     public async Task RemoveAsync(string key)
     {
         await cache.RemoveAsync(key);
+        CacheRemovalsCounter.Add(1);
         LogTicketRemoved(logger, key);
     }
 
