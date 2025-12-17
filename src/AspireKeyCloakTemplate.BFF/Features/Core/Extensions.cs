@@ -7,9 +7,9 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using Yarp.ReverseProxy.Transforms;
-using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddAntiforgeryTokenResponseTransform;
-using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddBearerTokenToHeadersTransform;
-using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.ValidateAntiforgeryTokenRequestTransform;
+using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddAntiforgeryTokenResponseTransform;
+using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddBearerTokenToHeadersTransform;
+using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.ValidateAntiforgeryTokenRequestTransform;
 
 namespace AspireKeyCloakTemplate.BFF.Features.Core;
 

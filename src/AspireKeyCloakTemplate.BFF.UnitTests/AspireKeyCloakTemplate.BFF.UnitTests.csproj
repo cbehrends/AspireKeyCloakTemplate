@@ -32,8 +32,4 @@
         <ProjectReference Include="..\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Features\BFF\" />
-    </ItemGroup>
-
 </Project>

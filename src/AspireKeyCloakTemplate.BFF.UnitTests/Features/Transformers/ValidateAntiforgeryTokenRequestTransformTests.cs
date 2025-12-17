@@ -7,9 +7,9 @@ using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
-using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.ValidateAntiforgeryTokenRequestTransform;
+using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.ValidateAntiforgeryTokenRequestTransform;
 
-namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.BFF.Transformers;
+namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
 
 public class ValidateAntiforgeryTokenRequestTransformTests
 {

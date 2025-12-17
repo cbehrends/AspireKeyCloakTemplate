@@ -7,9 +7,9 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
-using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddAntiforgeryTokenResponseTransform;
+using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddAntiforgeryTokenResponseTransform;
 
-namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.BFF.Transformers;
+namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
 
 public class AddAntiforgeryTokenResponseTransformTests
 {
