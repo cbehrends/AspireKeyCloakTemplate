@@ -42,6 +42,8 @@ internal static class Extensions
 
         public IHostApplicationBuilder AddAuthenticationSchemes()
         {
+            builder.Services.AddSingleton<ITicketStore, DistributedCacheTicketStore>();
+
             builder.Services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -52,6 +54,8 @@ internal static class Extensions
                     options.Cookie.Name = "__AspireKeyCloakTemplate_TOKEN";
                     options.Cookie.SameSite = SameSiteMode.Strict;
                     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    options.SlidingExpiration = true;
                 })
                 .AddKeycloakOpenIdConnect(
                     "keycloak",
@@ -63,7 +67,7 @@ internal static class Extensions
                         options.ResponseType = OpenIdConnectResponseType.Code;
                         options.ResponseMode = OpenIdConnectResponseMode.Query;
                         options.GetClaimsFromUserInfoEndpoint = true;
-                        options.SaveTokens = true;
+                        options.SaveTokens = true; // Still needed for Duende.AccessTokenManagement
                         options.MapInboundClaims = false;
                         options.CallbackPath = "/signin-oidc";
 
@@ -89,6 +93,10 @@ internal static class Extensions
                         .RequireAuthenticatedUser()
                         .Build();
             });
+
+            // Configure SessionStore after all services are registered
+            builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+                .Configure<ITicketStore>((options, store) => { options.SessionStore = store; });
 
             return builder;
         }
