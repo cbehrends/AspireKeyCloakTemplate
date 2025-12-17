@@ -35,3 +35,29 @@ export async function logout(redirectUrl?: string): Promise<void> {
 	}
 }
 
+export async function login(returnUrl?: string, claimsChallenge?: string): Promise<void> {
+	const url = new URL("/bff/login", window.location.origin);
+	if (returnUrl) {
+		url.searchParams.append("returnUrl", returnUrl);
+	}
+	if (claimsChallenge) {
+		url.searchParams.append("claimsChallenge", claimsChallenge);
+	}
+
+	try {
+		const res = await fetch(url, {
+			method: "POST",
+			credentials: "include",
+		});
+		if (res.ok) {
+			// Redirect to the login redirect URL if provided
+			const finalUrl = res.url || returnUrl || "/";
+			window.location.href = finalUrl;
+		}
+	} catch (error) {
+		console.error("Login failed:", error);
+		// Fallback redirect
+		window.location.href = "/";
+	}
+}
+
