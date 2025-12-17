@@ -18,6 +18,7 @@ builder.Services.AddOpenIdConnectAccessTokenManagement();
 builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "X-XSRF-TOKEN";
+    options.Cookie.Name = "X-XSRF-TOKEN";
     options.Cookie.SameSite = SameSiteMode.Strict;
 });
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
 using Yarp.ReverseProxy.Transforms;
 
 namespace AspireKeyCloakTemplate.Gateway.Features.Core;
@@ -19,16 +20,28 @@ internal static class Extensions
             builder.Services.AddSingleton<AddBearerTokenToHeadersTransform>();
             builder.Services.AddSingleton<AddAntiforgeryTokenResponseTransform>();
             builder.Services.AddSingleton<ValidateAntiforgeryTokenRequestTransform>();
-
+            builder.Services.AddOpenTelemetry()
+                .WithMetrics(metrics =>
+                {
+                    metrics.AddMeter("AspireKeyCloakTemplate.Gateway")
+                        .AddRuntimeInstrumentation()
+                        .AddAspNetCoreInstrumentation();
+                });
             builder.Services
                 .AddReverseProxy()
                 .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
                 .AddTransforms(builderContext =>
                 {
-                    builderContext.ResponseTransforms.Add(builderContext.Services
-                        .GetRequiredService<AddAntiforgeryTokenResponseTransform>());
-                    builderContext.RequestTransforms.Add(builderContext.Services
-                        .GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
+                    // Only apply antiforgery validation to API routes, not static content (react-app)
+                    if (builderContext.Route.RouteId == "api")
+                    {
+                        builderContext.ResponseTransforms.Add(builderContext.Services
+                            .GetRequiredService<AddAntiforgeryTokenResponseTransform>());
+                        builderContext.RequestTransforms.Add(builderContext.Services
+                            .GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
+                    }
+                    
+                    // Always remove cookies from all proxied requests
                     builderContext.RequestTransforms.Add(new RequestHeaderRemoveTransform("Cookie"));
 
                     if (!string.IsNullOrEmpty(builderContext.Route.AuthorizationPolicy))
