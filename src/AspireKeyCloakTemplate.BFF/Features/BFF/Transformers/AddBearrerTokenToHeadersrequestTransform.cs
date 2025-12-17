@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.BFF.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.Features.BFF.Transformers;
 
 /// <summary>
 ///     Request transform that appends a Bearer access token to the outgoing proxy request

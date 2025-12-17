@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using AspireKeyCloakTemplate.BFF.Features.Transformers;
 using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
@@ -11,8 +10,9 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
+using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddBearerTokenToHeadersTransform;
 
-namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.BFF.Transformers;
 
 /// <summary>
 ///     Unit tests for AddBearerTokenToHeadersTransform.

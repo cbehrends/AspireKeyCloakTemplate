@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Threading.RateLimiting;
-using AspireKeyCloakTemplate.BFF.Features.Transformers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +7,9 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using Yarp.ReverseProxy.Transforms;
+using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddAntiforgeryTokenResponseTransform;
+using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.AddBearerTokenToHeadersTransform;
+using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.ValidateAntiforgeryTokenRequestTransform;
 
 namespace AspireKeyCloakTemplate.BFF.Features.Core;
 

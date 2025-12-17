@@ -2,7 +2,7 @@ using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Antiforgery;
 using Yarp.ReverseProxy.Transforms;
 
-namespace AspireKeyCloakTemplate.BFF.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.Features.BFF.Transformers;
 
 /// <summary>
 ///     Request transform that validates antiforgery (XSRF) tokens on non-safe HTTP methods.

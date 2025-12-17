@@ -1,4 +1,3 @@
-using AspireKeyCloakTemplate.BFF.Features.Transformers;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -8,8 +7,9 @@ using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
+using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.BFF.Transformers.ValidateAntiforgeryTokenRequestTransform;
 
-namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
+namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.BFF.Transformers;
 
 public class ValidateAntiforgeryTokenRequestTransformTests
 {
