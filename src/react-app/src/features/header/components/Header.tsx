@@ -15,13 +15,18 @@ export default function Header() {
 
 	return (
 		<>
-			<header className="p-4 flex items-center justify-between bg-gray-800 text-white shadow-lg">
+			<header
+				className="p-4 flex items-center justify-between bg-gray-800 text-white shadow-lg"
+				role="banner"
+			>
 				<div className="flex items-center">
 					<button
 						type="button"
 						onClick={() => setIsOpen(true)}
 						className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-						aria-label="Open menu"
+						aria-label="Open navigation menu"
+						aria-expanded={isOpen}
+						aria-controls="main-navigation"
 					>
 						<Menu size={24} />
 					</button>
@@ -42,6 +47,7 @@ export default function Header() {
 							<button
 								onClick={handleLogout}
 								className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
+								aria-label="Logout"
 							>
 								Logout
 							</button>
@@ -50,6 +56,7 @@ export default function Header() {
 						<a
 							href="/bff/login"
 							className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
+							aria-label="Login"
 						>
 							Login
 						</a>
@@ -58,9 +65,14 @@ export default function Header() {
 			</header>
 
 			<aside
+				id="main-navigation"
 				className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
 					isOpen ? "translate-x-0" : "-translate-x-full"
 				}`}
+				role="navigation"
+				aria-label="Main navigation"
+				aria-hidden={!isOpen}
+				tabIndex={isOpen ? 0 : -1}
 			>
 				<div className="flex items-center justify-between p-4 border-b border-gray-700">
 					<h2 className="text-xl font-bold">Navigation</h2>
@@ -68,7 +80,7 @@ export default function Header() {
 						type="button"
 						onClick={() => setIsOpen(false)}
 						className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-						aria-label="Close menu"
+						aria-label="Close navigation menu"
 					>
 						<X size={24} />
 					</button>
@@ -83,6 +95,7 @@ export default function Header() {
 							className:
 								"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
 						}}
+						aria-label="Home"
 					>
 						<Home size={20} />
 						<span className="font-medium">Home</span>

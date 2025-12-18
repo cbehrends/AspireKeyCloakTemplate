@@ -17,14 +17,15 @@ const config = defineConfig({
     viteReact(),
   ],
   server: {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
     proxy: {
       '/bff': {
-        target: 'https://localhost:6001',
+        target: process.env.BFF_URL || 'https://localhost:6001',
         changeOrigin: true,
         secure: false,
       },
       '/api': {
-        target: 'https://localhost:6001',
+        target: process.env.BFF_URL || 'https://localhost:6001',
         changeOrigin: true,
         secure: false,
       },
