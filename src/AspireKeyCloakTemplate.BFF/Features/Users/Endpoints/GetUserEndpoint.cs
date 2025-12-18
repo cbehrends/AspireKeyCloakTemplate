@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using AspireKeyCloakTemplate.BFF.Features.Users.Model;
-using AspireKeyCloakTemplate.ServiceDefaults.Features.Endpoints;
+using AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
 
 namespace AspireKeyCloakTemplate.BFF.Features.Users.Endpoints;
 

@@ -1,4 +1,5 @@
 using AspireKeyCloakTemplate.IntegrationTests.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Playwright;
 using Projects;
 using Shouldly;
@@ -17,6 +18,8 @@ public class LoginTests(AspireManager aspireManager) : PlaywrightTestBase(aspire
         {
             // Wait for the Login link and click it
             var response = await page.GotoAsync("/");
+            response.ShouldNotBeNull();
+            response.Status.ShouldBe(200);
             var loginLink = await page.WaitForSelectorAsync("a:text('Login')");
             loginLink.ShouldNotBeNull();
             

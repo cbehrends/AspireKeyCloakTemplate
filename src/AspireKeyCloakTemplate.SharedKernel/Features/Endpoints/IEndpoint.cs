@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Routing;
 
-namespace AspireKeyCloakTemplate.ServiceDefaults.Features.Endpoints;
+namespace AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
 
 public interface IEndpoint
 {

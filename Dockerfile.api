@@ -6,7 +6,7 @@ WORKDIR /src
 
 # Copy project files
 COPY ["src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj", "src/AspireKeyCloakTemplate.API/"]
-COPY ["src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj", "src/AspireKeyCloakTemplate.ServiceDefaults/"]
+COPY ["src/AspireKeyCloakTemplate.SharedKernel/AspireKeyCloakTemplate.SharedKernel.csproj", "src/AspireKeyCloakTemplate.SharedKernel/"]
 COPY ["Directory.Packages.props", "."]
 
 # Restore dependencies

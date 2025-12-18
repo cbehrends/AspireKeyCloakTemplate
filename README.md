@@ -61,7 +61,7 @@ This section explains each project and its intended role so you can reason about
     - Responsibilities: Build-time/launch-time composition of API and Gateway projects; convenience host configuration
       for easier local runs or single-process debugging runs.
 
-- src/AspireKeyCloakTemplate.ServiceDefaults — Shared defaults & extensions
+- src/AspireKeyCloakTemplate.SharedKernel — Shared defaults & extensions
     - Purpose: Shared DI extensions, common configuration keys, logging / telemetry defaults, and helper types used
       across API and Gateway.
     - Responsibilities: Centralize common setup so each project can remain thin and consistent (e.g., AddAspireDefaults

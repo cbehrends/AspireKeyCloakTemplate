@@ -1,5 +1,5 @@
 using AspireKeyCloakTemplate.BFF.Features.Core;
-using AspireKeyCloakTemplate.ServiceDefaults.Features.Endpoints;
+using AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;

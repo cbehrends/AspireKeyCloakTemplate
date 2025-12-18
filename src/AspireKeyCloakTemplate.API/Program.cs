@@ -1,4 +1,4 @@
-using AspireKeyCloakTemplate.ServiceDefaults;
+using AspireKeyCloakTemplate.SharedKernel;
 
 var builder = WebApplication.CreateBuilder(args);
 

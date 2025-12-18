@@ -6,7 +6,7 @@ WORKDIR /src
 # Copy project files
 COPY ["Directory.Packages.props", "."]
 COPY ["src/AspireKeyCloakTemplate.BFF/AspireKeyCloakTemplate.BFF.csproj", "src/AspireKeyCloakTemplate.BFF/"]
-COPY ["src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj", "src/AspireKeyCloakTemplate.ServiceDefaults/"]
+COPY ["src/AspireKeyCloakTemplate.SharedKernel/AspireKeyCloakTemplate.SharedKernel.csproj", "src/AspireKeyCloakTemplate.SharedKernel/"]
 
 # Restore dependencies
 RUN dotnet restore "src/AspireKeyCloakTemplate.BFF/AspireKeyCloakTemplate.BFF.csproj"

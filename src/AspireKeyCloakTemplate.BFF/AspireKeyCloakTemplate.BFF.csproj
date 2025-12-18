@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\AspireKeyCloakTemplate.ServiceDefaults\AspireKeyCloakTemplate.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\AspireKeyCloakTemplate.SharedKernel\AspireKeyCloakTemplate.SharedKernel.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
