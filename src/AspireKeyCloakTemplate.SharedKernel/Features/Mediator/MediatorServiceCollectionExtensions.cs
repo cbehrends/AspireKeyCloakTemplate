@@ -7,30 +7,32 @@ namespace AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
 
 public static class MediatorServiceCollectionExtensions
 {
-    /// <summary>
-    ///     Registers mediator and handlers from specified assemblies
-    /// </summary>
-    public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assemblies)
+    extension(IServiceCollection services)
     {
-        return services.AddMediator(configuration =>
+        /// <summary>
+        ///     Registers mediator and handlers from specified assemblies
+        /// </summary>
+        public IServiceCollection AddMediator(params Assembly[] assemblies)
         {
-            configuration.RegisterServicesFromAssemblies(assemblies)
-                .AddCachingBehavior();
-        });
-    }
+            return services.AddMediator(configuration =>
+            {
+                configuration.RegisterServicesFromAssemblies(assemblies)
+                    .AddCachingBehavior();
+            });
+        }
 
-    /// <summary>
-    ///     Registers mediator with configuration
-    /// </summary>
-    public static IServiceCollection AddMediator(this IServiceCollection services,
-        Action<MediatorConfiguration> configuration)
-    {
-        var config = new MediatorConfiguration(services);
-        configuration(config);
+        /// <summary>
+        ///     Registers mediator with configuration
+        /// </summary>
+        public IServiceCollection AddMediator(Action<MediatorConfiguration> configuration)
+        {
+            var config = new MediatorConfiguration(services);
+            configuration(config);
 
-        services.AddScoped<IMediator, Mediator>();
+            services.AddScoped<IMediator, Mediator>();
 
-        return services;
+            return services;
+        }
     }
 }
 
