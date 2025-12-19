@@ -7,32 +7,29 @@ namespace AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
 
 public static class MediatorServiceCollectionExtensions
 {
-    extension(IServiceCollection services)
+    /// <summary>
+    ///     Registers mediator and handlers from specified assemblies
+    /// </summary>
+    public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assemblies)
     {
-        /// <summary>
-        ///     Registers mediator and handlers from specified assemblies
-        /// </summary>
-        public IServiceCollection AddMediator(params Assembly[] assemblies)
+        return services.AddMediator(configuration =>
         {
-            return services.AddMediator(configuration =>
-            {
-                configuration.RegisterServicesFromAssemblies(assemblies)
-                    .AddCachingBehavior();
-            });
-        }
+            configuration.RegisterServicesFromAssemblies(assemblies)
+                .AddCachingBehavior();
+        });
+    }
 
-        /// <summary>
-        ///     Registers mediator with configuration
-        /// </summary>
-        public IServiceCollection AddMediator(Action<MediatorConfiguration> configuration)
-        {
-            var config = new MediatorConfiguration(services);
-            configuration(config);
+    /// <summary>
+    ///     Registers mediator with configuration
+    /// </summary>
+    public static IServiceCollection AddMediator(this IServiceCollection services, Action<MediatorConfiguration> configuration)
+    {
+        var config = new MediatorConfiguration(services);
+        configuration(config);
 
-            services.AddScoped<IMediator, Mediator>();
+        services.AddScoped<IMediator, Mediator>();
 
-            return services;
-        }
+        return services;
     }
 }
 
@@ -75,8 +72,10 @@ public class MediatorConfiguration
             .ToList();
 
         foreach (var handlerType in handlerTypes)
-        foreach (var @interface in handlerType.Interfaces)
-            _services.AddScoped(@interface, handlerType.Type);
+        {
+            foreach (var @interface in handlerType.Interfaces)
+                _services.AddScoped(@interface, handlerType.Type);
+        }
     }
 
     private void RegisterValidators(Assembly[] assemblies)
@@ -95,8 +94,10 @@ public class MediatorConfiguration
             .ToList();
 
         foreach (var validatorType in validatorTypes)
-        foreach (var @interface in validatorType.Interfaces)
-            _services.AddScoped(@interface, validatorType.Type);
+        {
+            foreach (var @interface in validatorType.Interfaces)
+                _services.AddScoped(@interface, validatorType.Type);
+        }
     }
 
     private void RegisterBehaviors()
