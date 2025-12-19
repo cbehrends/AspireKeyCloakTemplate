@@ -4,14 +4,13 @@ using Microsoft.Playwright;
 namespace AspireKeyCloakTemplate.IntegrationTests.Core;
 
 /// <summary>
-/// Configure Playwright for interacting with the browser in tests.
+///     Configure Playwright for interacting with the browser in tests.
 /// </summary>
 public class PlaywrightManager : IAsyncLifetime
 {
-    private static bool IsDebugging => Debugger.IsAttached;
-    private static bool IsHeadless => false;//sDebugging is false;
-
     private IPlaywright? _playwright;
+    private static bool IsDebugging => Debugger.IsAttached;
+    private static bool IsHeadless => false; //sDebugging is false;
 
     internal IBrowser Browser { get; set; } = null!;
 

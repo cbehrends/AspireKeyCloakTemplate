@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Antiforgery;
 using Yarp.ReverseProxy.Transforms;
@@ -10,23 +11,23 @@ namespace AspireKeyCloakTemplate.BFF.Features.Transformers;
 /// </summary>
 internal sealed partial class ValidateAntiforgeryTokenRequestTransform : RequestTransform
 {
-    private readonly IAntiforgery _antiforgery;
-    private readonly ILogger<ValidateAntiforgeryTokenRequestTransform> _logger;
-
     // --- OpenTelemetry Instrumentation ---
     private static readonly Meter Meter = new("AspireKeyCloakTemplate.BFF", "1.0.0");
-    
-    private static readonly Counter<long> ValidationFailuresCounter = 
-        Meter.CreateCounter<long>(
-            "bff.antiforgery.failures", 
-            unit: "{failures}", 
-            description: "Number of failed antiforgery validations");
 
-    private static readonly Histogram<double> ValidationDuration = 
+    private static readonly Counter<long> ValidationFailuresCounter =
+        Meter.CreateCounter<long>(
+            "bff.antiforgery.failures",
+            "{failures}",
+            "Number of failed antiforgery validations");
+
+    private static readonly Histogram<double> ValidationDuration =
         Meter.CreateHistogram<double>(
-            "bff.antiforgery.duration", 
-            unit: "ms", 
-            description: "Duration of antiforgery validation processing");
+            "bff.antiforgery.duration",
+            "ms",
+            "Duration of antiforgery validation processing");
+
+    private readonly IAntiforgery _antiforgery;
+    private readonly ILogger<ValidateAntiforgeryTokenRequestTransform> _logger;
 
     public ValidateAntiforgeryTokenRequestTransform(
         IAntiforgery antiforgery,
@@ -45,9 +46,9 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
 
         LogApplyAsyncCalled(method, path);
 
-        if (HttpMethods.IsGet(method) || 
-            HttpMethods.IsHead(method) || 
-            HttpMethods.IsOptions(method) || 
+        if (HttpMethods.IsGet(method) ||
+            HttpMethods.IsHead(method) ||
+            HttpMethods.IsOptions(method) ||
             HttpMethods.IsTrace(method))
         {
             LogSkippingSafeMethod(method);
@@ -61,23 +62,25 @@ internal sealed partial class ValidateAntiforgeryTokenRequestTransform : Request
         }
 
         LogValidating(path);
-        
-        var startTime = System.Diagnostics.Stopwatch.GetTimestamp();
+
+        var startTime = Stopwatch.GetTimestamp();
         try
         {
             await _antiforgery.ValidateRequestAsync(httpContext);
-            
+
             // Record success duration
-            var elapsed = System.Diagnostics.Stopwatch.GetElapsedTime(startTime);
-            ValidationDuration.Record(elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("status", "success"));
+            var elapsed = Stopwatch.GetElapsedTime(startTime);
+            ValidationDuration.Record(elapsed.TotalMilliseconds,
+                new KeyValuePair<string, object?>("status", "success"));
         }
         catch (AntiforgeryValidationException ex)
         {
             // Record failure metrics
-            var elapsed = System.Diagnostics.Stopwatch.GetElapsedTime(startTime);
-            ValidationDuration.Record(elapsed.TotalMilliseconds, new KeyValuePair<string, object?>("status", "failure"));
-            
-            ValidationFailuresCounter.Add(1, 
+            var elapsed = Stopwatch.GetElapsedTime(startTime);
+            ValidationDuration.Record(elapsed.TotalMilliseconds,
+                new KeyValuePair<string, object?>("status", "failure"));
+
+            ValidationFailuresCounter.Add(1,
                 new KeyValuePair<string, object?>("path", path),
                 new KeyValuePair<string, object?>("method", method));
 

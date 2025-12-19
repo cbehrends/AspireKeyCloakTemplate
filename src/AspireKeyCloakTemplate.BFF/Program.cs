@@ -1,6 +1,5 @@
 using System.Reflection;
 using AspireKeyCloakTemplate.BFF.Features.Core;
-using AspireKeyCloakTemplate.BFF.Features.Users.Endpoints;
 using AspireKeyCloakTemplate.SharedKernel;
 using AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
 using AspireKeyCloakTemplate.SharedKernel.Features.Mediator;

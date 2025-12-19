@@ -16,7 +16,7 @@ public class MediatorTests
         var services = new ServiceCollection();
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -37,7 +37,7 @@ public class MediatorTests
         var handler = new TestVoidRequestHandler();
         services.AddScoped<IRequestHandler<TestVoidRequest, Unit>>(sp => handler);
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestVoidRequest("test");
@@ -56,7 +56,7 @@ public class MediatorTests
         // Arrange
         var services = new ServiceCollection();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -71,7 +71,7 @@ public class MediatorTests
         // Arrange
         var services = new ServiceCollection();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -79,7 +79,7 @@ public class MediatorTests
         // Act & Assert
         var exception = await Should.ThrowAsync<InvalidOperationException>(async () =>
             await mediator.Send(request));
-        
+
         exception.Message.ShouldContain("Handler not found");
     }
 
@@ -91,7 +91,7 @@ public class MediatorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IRequestHandler<GenericRequest<string>, string>, GenericRequestHandler<string>>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -112,10 +112,10 @@ public class MediatorTests
         var handlerMock = Substitute.For<IRequestHandler<TestRequest, TestResponse>>();
         handlerMock.Handle(Arg.Any<TestRequest>(), Arg.Any<CancellationToken>())
             .Returns(new TestResponse("mocked"));
-        
+
         services.AddScoped(sp => handlerMock);
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -135,7 +135,7 @@ public class MediatorTests
         var services = new ServiceCollection();
         services.AddScoped<IRequestHandler<GenericRequest<int>, int>, GenericRequestHandler<int>>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -146,4 +146,3 @@ public class MediatorTests
         response.ShouldBe(42);
     }
 }
-

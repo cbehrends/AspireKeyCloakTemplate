@@ -19,30 +19,30 @@ internal sealed partial class DistributedCacheTicketStore(
 
     // --- OpenTelemetry Instrumentation ---
     private static readonly Meter Meter = new("AspireKeyCloakTemplate.BFF", "1.0.0");
-    
-    private static readonly Counter<long> CacheHitsCounter = 
-        Meter.CreateCounter<long>(
-            "bff.auth_cache.hits", 
-            unit: "{hits}", 
-            description: "Number of authentication ticket cache hits");
 
-    private static readonly Counter<long> CacheMissesCounter = 
+    private static readonly Counter<long> CacheHitsCounter =
         Meter.CreateCounter<long>(
-            "bff.auth_cache.misses", 
-            unit: "{misses}", 
-            description: "Number of authentication ticket cache misses");
+            "bff.auth_cache.hits",
+            "{hits}",
+            "Number of authentication ticket cache hits");
 
-    private static readonly Counter<long> CacheStoresCounter = 
+    private static readonly Counter<long> CacheMissesCounter =
         Meter.CreateCounter<long>(
-            "bff.auth_cache.stores", 
-            unit: "{stores}", 
-            description: "Number of authentication tickets stored");
+            "bff.auth_cache.misses",
+            "{misses}",
+            "Number of authentication ticket cache misses");
 
-    private static readonly Counter<long> CacheRemovalsCounter = 
+    private static readonly Counter<long> CacheStoresCounter =
         Meter.CreateCounter<long>(
-            "bff.auth_cache.removals", 
-            unit: "{removals}", 
-            description: "Number of authentication tickets removed from cache");
+            "bff.auth_cache.stores",
+            "{stores}",
+            "Number of authentication tickets stored");
+
+    private static readonly Counter<long> CacheRemovalsCounter =
+        Meter.CreateCounter<long>(
+            "bff.auth_cache.removals",
+            "{removals}",
+            "Number of authentication tickets removed from cache");
 
     /// <summary>
     ///     Stores an authentication ticket in the distributed cache and returns a unique key.
@@ -69,14 +69,10 @@ internal sealed partial class DistributedCacheTicketStore(
         var expiresUtc = ticket.Properties.ExpiresUtc;
 
         if (expiresUtc.HasValue)
-        {
             options.SetAbsoluteExpiration(expiresUtc.Value);
-        }
         else
-        {
             // Default expiration if not set
             options.SetSlidingExpiration(TimeSpan.FromHours(1));
-        }
 
         var serialized = TicketSerializer.Default.Serialize(ticket);
         await cache.SetAsync(key, serialized, options);
@@ -130,4 +126,3 @@ internal sealed partial class DistributedCacheTicketStore(
     [LoggerMessage(LogLevel.Debug, "Authentication ticket removed for key: {key}")]
     static partial void LogTicketRemoved(ILogger<DistributedCacheTicketStore> logger, string key);
 }
-

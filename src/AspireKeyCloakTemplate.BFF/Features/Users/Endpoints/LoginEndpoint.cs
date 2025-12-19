@@ -25,4 +25,3 @@ internal class LoginEndpoint : IEndpoint
         return builder;
     }
 }
-

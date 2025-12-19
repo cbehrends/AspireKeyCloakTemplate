@@ -10,7 +10,8 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 using Yarp.ReverseProxy.Transforms;
-using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddBearerTokenToHeadersTransform;
+using AddBearerTokenToHeadersTransform =
+    AspireKeyCloakTemplate.BFF.Features.Transformers.AddBearerTokenToHeadersTransform;
 
 namespace AspireKeyCloakTemplate.BFF.UnitTests.Features.Transformers;
 

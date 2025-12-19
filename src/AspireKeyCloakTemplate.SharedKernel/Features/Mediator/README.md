@@ -1,10 +1,11 @@
 # Mediator Pattern Implementation
 
-This directory contains a custom implementation of the Mediator pattern, similar to MediatR, for the AspireKeyCloakTemplate project.
+This directory contains a custom implementation of the Mediator pattern for the AspireKeyCloakTemplate project.
 
 ## Overview
 
-The mediator pattern encapsulates request/response interactions and provides a pipeline for cross-cutting concerns like validation and logging.
+The mediator pattern encapsulates request/response interactions and provides a pipeline for cross-cutting concerns like
+validation, logging and caching.
 
 ## Key Components
 
@@ -21,6 +22,13 @@ The mediator pattern encapsulates request/response interactions and provides a p
 - **`IPipelineBehavior<TRequest, TResponse>`** - Interface for creating pipeline behaviors
 - **`ValidationBehavior<TRequest, TResponse>`** - Validates requests using FluentValidation
 - **`LoggingBehavior<TRequest, TResponse>`** - Logs request execution
+- **`CachingBehavior<TRequest, TResponse>`** - Caches responses for cacheable requests
+
+### Caching
+
+- **`ICacheableRequest<TResponse>`** - Interface for requests that can be cached
+- **`CacheInvalidationNotification`** - Notification to invalidate a single cache item
+- **`CacheGroupInvalidationNotification`** - Notification to invalidate a group of cache items
 
 ## Usage
 
@@ -141,6 +149,7 @@ await mediator.Send(new DeleteUserCommand("user-123"));
 
 1. **LoggingBehavior** - Automatically logs when requests are handled
 2. **ValidationBehavior** - Automatically validates requests using FluentValidation
+3. **CachingBehavior** - Automatically caches responses for requests implementing `ICacheableRequest<TResponse>`
 
 ### Execution Order
 
@@ -194,9 +203,132 @@ public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
 services.AddScoped(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
 ```
 
+## Caching
+
+The mediator includes a built-in caching behavior that uses `IDistributedCache` to cache responses for cacheable requests.
+
+### Making a Request Cacheable
+
+Implement `ICacheableRequest<TResponse>` to enable caching for a request:
+
+```csharp
+using AspireKeyCloakTemplate.SharedKernel.Features.Mediator.Caching;
+
+public record GetUserQuery(string UserId) : ICacheableRequest<UserDto>
+{
+    public string CacheKey => $"user:{UserId}";
+    public string? CacheGroupKey => "users";
+    public TimeSpan? AbsoluteExpirationRelativeToNow => TimeSpan.FromMinutes(5);
+}
+```
+
+### ICacheableRequest Properties
+
+- **`CacheKey`** - Unique key for the cached item
+- **`CacheGroupKey`** - Optional group key for invalidating multiple related cache items at once
+- **`AbsoluteExpirationRelativeToNow`** - Optional expiration time for the cached item
+
+### Cache Invalidation
+
+#### Invalidating a Single Cache Item
+
+Use `CacheInvalidationNotification` to invalidate a specific cache item:
+
+```csharp
+using AspireKeyCloakTemplate.SharedKernel.Features.Mediator.Caching;
+
+// After updating a user
+await mediator.Publish(new CacheInvalidationNotification($"user:{userId}"));
+```
+
+#### Invalidating a Group of Cache Items
+
+Use `CacheGroupInvalidationNotification` to invalidate all cache items in a group:
+
+```csharp
+using AspireKeyCloakTemplate.SharedKernel.Features.Mediator.Caching;
+
+// After a bulk operation that affects all users
+await mediator.Publish(new CacheGroupInvalidationNotification("users"));
+```
+
+### How Cache Groups Work
+
+When a cacheable request with a `CacheGroupKey` is cached:
+1. The response is stored with the `CacheKey`
+2. The `CacheKey` is added to a set tracked under the `CacheGroupKey`
+
+When invalidating a group:
+1. All cache keys in the group are retrieved
+2. Each individual cache item is removed
+3. The group tracking set is removed
+
+### Example: Complete Caching Flow
+
+```csharp
+// Query with caching
+public record GetProductQuery(string ProductId) : ICacheableRequest<ProductDto>
+{
+    public string CacheKey => $"product:{ProductId}";
+    public string? CacheGroupKey => "products";
+    public TimeSpan? AbsoluteExpirationRelativeToNow => TimeSpan.FromMinutes(10);
+}
+
+// Command that invalidates cache
+public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand>
+{
+    private readonly IProductRepository _repository;
+    private readonly IMediator _mediator;
+
+    public UpdateProductCommandHandler(IProductRepository repository, IMediator mediator)
+    {
+        _repository = repository;
+        _mediator = mediator;
+    }
+
+    public async Task<Unit> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
+    {
+        await _repository.UpdateAsync(request.Product, cancellationToken);
+        
+        // Invalidate the specific product cache
+        await _mediator.Publish(
+            new CacheInvalidationNotification($"product:{request.Product.Id}"), 
+            cancellationToken);
+        
+        return Unit.Value;
+    }
+}
+
+// Command that invalidates entire cache group
+public class ImportProductsCommandHandler : IRequestHandler<ImportProductsCommand>
+{
+    private readonly IProductRepository _repository;
+    private readonly IMediator _mediator;
+
+    public ImportProductsCommandHandler(IProductRepository repository, IMediator mediator)
+    {
+        _repository = repository;
+        _mediator = mediator;
+    }
+
+    public async Task<Unit> Handle(ImportProductsCommand request, CancellationToken cancellationToken)
+    {
+        await _repository.BulkInsertAsync(request.Products, cancellationToken);
+        
+        // Invalidate all product caches
+        await _mediator.Publish(
+            new CacheGroupInvalidationNotification("products"), 
+            cancellationToken);
+        
+        return Unit.Value;
+    }
+}
+```
+
 ## Service Lifetime
 
 All components are registered as **Scoped** services:
+
 - Mediator
 - Request Handlers
 - Validators
@@ -207,6 +339,7 @@ This ensures proper lifecycle management within HTTP request boundaries.
 ## Testing
 
 See the `AspireKeyCloakTemplate.SharedKernel.UnitTests` project for comprehensive test examples including:
+
 - Unit tests for the mediator
 - Pipeline behavior tests
 - Validation behavior tests
@@ -260,18 +393,4 @@ Features/
 - **Testability**: Handlers and behaviors can be tested in isolation
 - **Maintainability**: Clear separation of concerns and predictable patterns
 
-## Differences from MediatR
-
-This implementation is a simplified version of MediatR focusing on:
-- Request/Response pattern
-- Pipeline behaviors
-- Validation and logging
-
-Not included (compared to full MediatR):
-- Notification/Event publishing (INotification)
-- Stream requests (IStreamRequest)
-- Pre/Post processors
-- Request/Response pre/post processors
-
-These features can be added later if needed.
 

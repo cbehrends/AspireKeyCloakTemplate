@@ -14,11 +14,11 @@ public class PipelineBehaviorTests
         // Arrange
         var services = new ServiceCollection();
         var behavior = new TestPipelineBehavior<TestRequest, TestResponse>();
-        
+
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>>(sp => behavior);
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -38,16 +38,16 @@ public class PipelineBehaviorTests
         // Arrange
         var services = new ServiceCollection();
         var executionOrder = new List<string>();
-        
+
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
-        
-        services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>>(sp => 
+
+        services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>>(sp =>
             new OrderTrackingBehavior(executionOrder, "First"));
-        services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>>(sp => 
+        services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>>(sp =>
             new OrderTrackingBehavior(executionOrder, "Second"));
-        
+
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -70,7 +70,7 @@ public class PipelineBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>, ModifyingBehavior>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -89,7 +89,7 @@ public class PipelineBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IPipelineBehavior<TestRequest, TestResponse>, ShortCircuitBehavior>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 
@@ -107,7 +107,7 @@ public class PipelineBehaviorTests
         var services = new ServiceCollection();
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
 

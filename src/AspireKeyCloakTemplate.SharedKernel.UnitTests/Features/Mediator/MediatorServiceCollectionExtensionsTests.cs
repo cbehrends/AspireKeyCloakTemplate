@@ -96,10 +96,7 @@ public class MediatorServiceCollectionExtensionsTests
         var services = new ServiceCollection();
 
         // Act
-        services.AddMediator(config =>
-        {
-            config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
-        });
+        services.AddMediator(config => { config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()); });
 
         // Assert
         var serviceProvider = services.BuildServiceProvider();
@@ -134,9 +131,9 @@ public class MediatorServiceCollectionExtensionsTests
         services.AddMediator(Assembly.GetExecutingAssembly());
 
         // Assert
-        var handlerDescriptor = services.FirstOrDefault(d => 
+        var handlerDescriptor = services.FirstOrDefault(d =>
             d.ServiceType == typeof(IRequestHandler<TestRequest, TestResponse>));
-        
+
         handlerDescriptor.ShouldNotBeNull();
         handlerDescriptor.Lifetime.ShouldBe(ServiceLifetime.Scoped);
     }
@@ -149,9 +146,9 @@ public class MediatorServiceCollectionExtensionsTests
         services.AddMediator(Assembly.GetExecutingAssembly());
 
         // Assert
-        var validatorDescriptor = services.FirstOrDefault(d => 
+        var validatorDescriptor = services.FirstOrDefault(d =>
             d.ServiceType == typeof(IValidator<TestRequest>));
-        
+
         validatorDescriptor.ShouldNotBeNull();
         validatorDescriptor.Lifetime.ShouldBe(ServiceLifetime.Scoped);
     }
@@ -164,12 +161,11 @@ public class MediatorServiceCollectionExtensionsTests
         services.AddMediator(Assembly.GetExecutingAssembly());
 
         // Assert
-        var behaviorDescriptors = services.Where(d => 
-            d.ServiceType.IsGenericType && 
+        var behaviorDescriptors = services.Where(d =>
+            d.ServiceType.IsGenericType &&
             d.ServiceType.GetGenericTypeDefinition() == typeof(IPipelineBehavior<,>)).ToList();
-        
+
         behaviorDescriptors.ShouldNotBeEmpty();
         behaviorDescriptors.ShouldAllBe(d => d.Lifetime == ServiceLifetime.Scoped);
     }
 }
-

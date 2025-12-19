@@ -19,7 +19,7 @@ public class ValidationBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("valid");
@@ -41,7 +41,7 @@ public class ValidationBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest(""); // Empty string - invalid
@@ -49,7 +49,7 @@ public class ValidationBehaviorTests
         // Act & Assert
         var exception = await Should.ThrowAsync<ValidationException>(async () =>
             await mediator.Send(request));
-        
+
         exception.Errors.ShouldNotBeEmpty();
         exception.Errors.ShouldContain(e => e.ErrorMessage == "Value cannot be empty");
     }
@@ -63,7 +63,7 @@ public class ValidationBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("ab"); // Too short - violates MinimumLength rule
@@ -71,7 +71,7 @@ public class ValidationBehaviorTests
         // Act & Assert
         var exception = await Should.ThrowAsync<ValidationException>(async () =>
             await mediator.Send(request));
-        
+
         exception.Errors.Count().ShouldBeGreaterThan(0);
         exception.Errors.ShouldContain(e => e.ErrorMessage.Contains("at least 3 characters"));
     }
@@ -85,7 +85,7 @@ public class ValidationBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -108,7 +108,7 @@ public class ValidationBehaviorTests
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("invalid_value"); // Contains underscore - invalid per SecondValidator
@@ -116,7 +116,7 @@ public class ValidationBehaviorTests
         // Act & Assert
         var exception = await Should.ThrowAsync<ValidationException>(async () =>
             await mediator.Send(request));
-        
+
         exception.Errors.ShouldContain(e => e.ErrorMessage == "Value cannot contain underscores");
     }
 
@@ -127,12 +127,12 @@ public class ValidationBehaviorTests
         var services = new ServiceCollection();
         var cancellationTokenSource = new CancellationTokenSource();
         cancellationTokenSource.Cancel();
-        
+
         services.AddScoped<IValidator<TestRequest>>(sp => new AsyncValidator());
         services.AddScoped<IRequestHandler<TestRequest, TestResponse>, TestRequestHandler>();
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped<IMediator, SharedKernel.Features.Mediator.Mediator>();
-        
+
         var serviceProvider = services.BuildServiceProvider();
         var mediator = serviceProvider.GetRequiredService<IMediator>();
         var request = new TestRequest("test");
@@ -165,4 +165,3 @@ public class ValidationBehaviorTests
         }
     }
 }
-

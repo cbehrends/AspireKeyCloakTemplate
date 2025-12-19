@@ -4,7 +4,7 @@ using AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
 namespace AspireKeyCloakTemplate.BFF.Features.Users.Queries.GetCurrentUser;
 
 /// <summary>
-/// Handler for GetCurrentUserQuery
+///     Handler for GetCurrentUserQuery
 /// </summary>
 public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, UserInfo>
 {
@@ -47,4 +47,3 @@ public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, U
             Enumerable.Empty<UserClaim>()));
     }
 }
-

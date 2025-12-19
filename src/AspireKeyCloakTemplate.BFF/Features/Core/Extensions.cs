@@ -7,9 +7,12 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using Yarp.ReverseProxy.Transforms;
-using AddAntiforgeryTokenResponseTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddAntiforgeryTokenResponseTransform;
-using AddBearerTokenToHeadersTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.AddBearerTokenToHeadersTransform;
-using ValidateAntiforgeryTokenRequestTransform = AspireKeyCloakTemplate.BFF.Features.Transformers.ValidateAntiforgeryTokenRequestTransform;
+using AddAntiforgeryTokenResponseTransform =
+    AspireKeyCloakTemplate.BFF.Features.Transformers.AddAntiforgeryTokenResponseTransform;
+using AddBearerTokenToHeadersTransform =
+    AspireKeyCloakTemplate.BFF.Features.Transformers.AddBearerTokenToHeadersTransform;
+using ValidateAntiforgeryTokenRequestTransform =
+    AspireKeyCloakTemplate.BFF.Features.Transformers.ValidateAntiforgeryTokenRequestTransform;
 
 namespace AspireKeyCloakTemplate.BFF.Features.Core;
 
@@ -43,7 +46,7 @@ internal static class Extensions
                         builderContext.RequestTransforms.Add(builderContext.Services
                             .GetRequiredService<ValidateAntiforgeryTokenRequestTransform>());
                     }
-                    
+
                     // Always remove cookies from all proxied requests
                     builderContext.RequestTransforms.Add(new RequestHeaderRemoveTransform("Cookie"));
 

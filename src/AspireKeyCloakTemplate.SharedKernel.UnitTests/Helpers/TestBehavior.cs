@@ -42,4 +42,3 @@ public class ShortCircuitBehavior : IPipelineBehavior<TestRequest, TestResponse>
         return Task.FromResult(new TestResponse("Short-circuited"));
     }
 }
-

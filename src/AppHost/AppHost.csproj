@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\AspireKeyCloakTemplate.API\AspireKeyCloakTemplate.API.csproj"/>
-        <ProjectReference Include="..\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj" />
+        <ProjectReference Include="..\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

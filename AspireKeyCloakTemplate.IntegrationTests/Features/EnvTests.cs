@@ -1,4 +1,5 @@
 using Aspire.Hosting;
+using Projects;
 
 namespace AspireKeyCloakTemplate.IntegrationTests.Features;
 
@@ -9,7 +10,7 @@ public class EnvVarTests
     {
         // Arrange
         var appHost = await DistributedApplicationTestingBuilder
-            .CreateAsync<Projects.AppHost>();
+            .CreateAsync<AppHost>();
 
         var frontend = (IResourceWithEnvironment)appHost.Resources
             .Single(static r => r.Name == "bff");
@@ -26,6 +27,5 @@ public class EnvVarTests
         Assert.Contains(
             new KeyValuePair<string, string>("services__api__https__0", "{api.bindings.https.url}"),
             envVars);
-
     }
 }

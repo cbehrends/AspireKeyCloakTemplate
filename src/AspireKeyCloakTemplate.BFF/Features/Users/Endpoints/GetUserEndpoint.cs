@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using AspireKeyCloakTemplate.BFF.Features.Users.Model;
 using AspireKeyCloakTemplate.BFF.Features.Users.Queries.GetCurrentUser;
 using AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
 using AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
@@ -10,7 +8,7 @@ internal class GetUserEndpoint : IEndpoint
 {
     public IEndpointRouteBuilder MapEndpoints(IEndpointRouteBuilder builder)
     {
-        builder.MapGet("/user", async ( IMediator mediator) =>
+        builder.MapGet("/user", async (IMediator mediator) =>
         {
             var user = await mediator.Send(new GetCurrentUserQuery());
             return TypedResults.Ok(user);
@@ -19,4 +17,3 @@ internal class GetUserEndpoint : IEndpoint
         return builder;
     }
 }
-

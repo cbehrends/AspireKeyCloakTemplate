@@ -24,4 +24,3 @@ internal class LogoutEndpoint : IEndpoint
         return builder;
     }
 }
-

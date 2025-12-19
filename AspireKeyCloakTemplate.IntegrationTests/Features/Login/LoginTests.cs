@@ -1,5 +1,4 @@
 using AspireKeyCloakTemplate.IntegrationTests.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Playwright;
 using Projects;
 using Shouldly;
@@ -21,14 +20,16 @@ public class LoginTests(AspireManager aspireManager) : PlaywrightTestBase(aspire
             response.Status.ShouldBe(200);
             var loginLink = await page.WaitForSelectorAsync("a:text('Login')");
             loginLink.ShouldNotBeNull();
-            
+
             await loginLink.ClickAsync();
 
             // Wait for the Keycloak login page
-            await page.WaitForURLAsync(url => url.ToString().Contains("/realms/sandbox/login-actions/authenticate"), new() { Timeout = 10000 });
+            await page.WaitForURLAsync(url => url.ToString().Contains("/realms/sandbox/login-actions/authenticate"),
+                new PageWaitForURLOptions { Timeout = 10000 });
 
             // Fill in credentials
-            await page.FillAsync("input[name='username'], input[name='email'], input[placeholder*='Username']", "testuser");
+            await page.FillAsync("input[name='username'], input[name='email'], input[placeholder*='Username']",
+                "testuser");
             await page.FillAsync("input[type='password']", "password123");
 
             // Click Sign In
@@ -38,7 +39,8 @@ public class LoginTests(AspireManager aspireManager) : PlaywrightTestBase(aspire
 
             // Wait for redirect back to BFF and check for Logout
             var bffEndpoint = AspireManager.App?.GetEndpoint("bff").ToString();
-            await page.WaitForURLAsync(url => url.ToString().StartsWith(bffEndpoint!), new PageWaitForURLOptions { Timeout = 10000 });
+            await page.WaitForURLAsync(url => url.ToString().StartsWith(bffEndpoint!),
+                new PageWaitForURLOptions { Timeout = 10000 });
             var logoutButton = await page.WaitForSelectorAsync("button:text('Logout')");
             logoutButton.ShouldNotBeNull();
 
