@@ -59,7 +59,8 @@ public static class Extensions
                 {
                     metrics.AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
-                        .AddRuntimeInstrumentation();
+                        .AddRuntimeInstrumentation()
+                        .AddMeter("AspireKeyCloakTemplate.Mediator");
                 })
                 .WithTracing(tracing =>
                 {

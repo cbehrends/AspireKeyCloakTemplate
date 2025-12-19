@@ -6,6 +6,7 @@
     </Folder>
     <Folder Name="/Infrastructure/">
         <Project Path="src/AspireKeyCloakTemplate.SharedKernel/AspireKeyCloakTemplate.SharedKernel.csproj" />
+        <Project Path="src/AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj" />
     </Folder>
     <Project Path="src/AppHost/AppHost.csproj" />
     <Project Path="src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj" />

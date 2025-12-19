@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Playwright;
 using Projects;
 using Shouldly;
-using Tests;
 
 namespace AspireKeyCloakTemplate.IntegrationTests.Features.Login;
 

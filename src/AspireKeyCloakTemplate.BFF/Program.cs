@@ -3,6 +3,7 @@ using AspireKeyCloakTemplate.BFF.Features.Core;
 using AspireKeyCloakTemplate.BFF.Features.Users.Endpoints;
 using AspireKeyCloakTemplate.SharedKernel;
 using AspireKeyCloakTemplate.SharedKernel.Features.Endpoints;
+using AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Antiforgery;
 
@@ -16,6 +17,11 @@ builder.AddRateLimiting();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddOpenIdConnectAccessTokenManagement();
+
+// Register mediator and scan for handlers
+builder.Services.AddMediator(Assembly.GetExecutingAssembly());
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAntiforgery(options =>
 {

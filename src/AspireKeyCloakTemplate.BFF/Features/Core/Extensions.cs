@@ -26,6 +26,7 @@ internal static class Extensions
                 .WithMetrics(metrics =>
                 {
                     metrics.AddMeter("AspireKeyCloakTemplate.BFF")
+                        .AddMeter("AspireKeyCloakTemplate.Mediator")
                         .AddRuntimeInstrumentation()
                         .AddAspNetCoreInstrumentation();
                 });

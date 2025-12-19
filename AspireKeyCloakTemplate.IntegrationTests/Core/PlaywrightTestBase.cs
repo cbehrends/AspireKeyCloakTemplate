@@ -1,8 +1,7 @@
 using Aspire.Hosting;
-using AspireKeyCloakTemplate.IntegrationTests.Core;
 using Microsoft.Playwright;
 
-namespace Tests;
+namespace AspireKeyCloakTemplate.IntegrationTests.Core;
 
 /// <summary>
 /// Base class for Playwright tests, providing common functionality and setup for Playwright testing with ASP.NET Core.
