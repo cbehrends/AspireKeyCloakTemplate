@@ -60,16 +60,19 @@ jobs:
             /k:"cbehrends_AspireKeyCloakTemplate" `
             /o:"cbehrends" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/*.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="${{ github.workspace }}/TestResults/coverage.opencover.xml"
 
           dotnet build --configuration Release
 
           dotnet test `
             --configuration Release `
             --no-build `
+            --settings .runsettings `
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
-            /p:CoverletOutput=./TestResults/
+            /p:CoverletOutput="${{ github.workspace }}/TestResults/" `
+            /p:MergeWith="${{ github.workspace }}/TestResults/coverage.opencover.xml" `
+            /p:CoverletOutputJson=false
 
           ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
