@@ -45,6 +45,12 @@ jobs:
           New-Item -ItemType Directory -Path ${{ runner.temp }}\sonarscanner | Out-Null
           dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\sonarscanner
 
+      - name: Install Playwright browsers
+        shell: powershell
+        run: |
+          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
+          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
+
       - name: Build, Test, and Analyze with SonarCloud
         shell: powershell
         env:
