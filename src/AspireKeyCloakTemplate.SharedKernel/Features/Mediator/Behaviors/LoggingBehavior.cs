@@ -34,6 +34,12 @@ public sealed partial class LoggingBehavior<TRequest, TResponse>(ILogger<Logging
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
+    private const string RequestNameKey = "request.name";
+    private const string ExceptionTypeKey = "exception.type";
+    private const string StatusKey = "status";
+    private const string SuccessValue = "success";
+    private const string ErrorValue = "error";
+
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -43,7 +49,7 @@ public sealed partial class LoggingBehavior<TRequest, TResponse>(ILogger<Logging
         var stopwatch = Stopwatch.StartNew();
 
         // Increment request counter
-        MediatorMetrics.RequestCounter.Add(1, new KeyValuePair<string, object?>("request.name", requestName));
+        MediatorMetrics.RequestCounter.Add(1, new KeyValuePair<string, object?>(RequestNameKey, requestName));
 
         LogHandlingRequest(logger, requestName);
 
@@ -55,8 +61,8 @@ public sealed partial class LoggingBehavior<TRequest, TResponse>(ILogger<Logging
 
             // Record successful request duration
             MediatorMetrics.RequestDuration.Record(stopwatch.Elapsed.TotalMilliseconds,
-                new KeyValuePair<string, object?>("request.name", requestName),
-                new KeyValuePair<string, object?>("status", "success"));
+                new KeyValuePair<string, object?>(RequestNameKey, requestName),
+                new KeyValuePair<string, object?>(StatusKey, SuccessValue));
 
             LogHandledRequest(logger, requestName);
 
@@ -68,13 +74,13 @@ public sealed partial class LoggingBehavior<TRequest, TResponse>(ILogger<Logging
 
             // Increment error counter and record failed request duration
             MediatorMetrics.ErrorCounter.Add(1,
-                new KeyValuePair<string, object?>("request.name", requestName),
-                new KeyValuePair<string, object?>("exception.type", ex.GetType().Name));
+                new KeyValuePair<string, object?>(RequestNameKey, requestName),
+                new KeyValuePair<string, object?>(ExceptionTypeKey, ex.GetType().Name));
 
             MediatorMetrics.RequestDuration.Record(stopwatch.Elapsed.TotalMilliseconds,
-                new KeyValuePair<string, object?>("request.name", requestName),
-                new KeyValuePair<string, object?>("status", "error"),
-                new KeyValuePair<string, object?>("exception.type", ex.GetType().Name));
+                new KeyValuePair<string, object?>(RequestNameKey, requestName),
+                new KeyValuePair<string, object?>(StatusKey, ErrorValue),
+                new KeyValuePair<string, object?>(ExceptionTypeKey, ex.GetType().Name));
 
             LogErrorHandlingRequest(logger, ex, requestName);
             throw;

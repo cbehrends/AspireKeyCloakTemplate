@@ -16,7 +16,7 @@ internal class LoginEndpoint : IEndpoint
             };
 
             if (claimsChallenge == null) return TypedResults.Challenge(properties);
-            var jsonString = claimsChallenge.Replace("\\", "", StringComparison.Ordinal).Trim(['"']);
+            var jsonString = claimsChallenge.Replace("\\", "").Trim('"');
             properties.Items["claims"] = jsonString;
 
             return TypedResults.Challenge(properties);

@@ -21,4 +21,10 @@
         <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="realms.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
 </Project>

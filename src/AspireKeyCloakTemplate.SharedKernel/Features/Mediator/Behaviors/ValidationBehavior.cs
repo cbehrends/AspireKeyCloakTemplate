@@ -32,6 +32,18 @@ internal static class ValidationMetrics
         "Total number of validation failures");
 }
 
+internal static class ValidationBehaviorConstants
+{
+    public const string RequestName = "request.name";
+    public const string ValidatorCount = "validator.count";
+    public const string Status = "status";
+    public const string Failed = "failed";
+    public const string Success = "success";
+    public const string Error = "error";
+    public const string ExceptionType = "exception.type";
+    public const string FailureCount = "failure.count";
+}
+
 /// <summary>
 ///     Pipeline behavior that validates requests using FluentValidation validators
 /// </summary>
@@ -54,10 +66,10 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 
         // Track validation execution and number of validators
         ValidationMetrics.ValidatorExecutionCounter.Add(1,
-            new KeyValuePair<string, object?>("request.name", requestName));
+            new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName));
 
         ValidationMetrics.ValidatorRunCounter.Add(validatorCount,
-            new KeyValuePair<string, object?>("request.name", requestName));
+            new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName));
 
         try
         {
@@ -77,40 +89,35 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             {
                 // Record validation failure
                 ValidationMetrics.ValidationFailureCounter.Add(1,
-                    new KeyValuePair<string, object?>("request.name", requestName),
-                    new KeyValuePair<string, object?>("failure.count", failures.Count));
+                    new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName),
+                    new KeyValuePair<string, object?>(ValidationBehaviorConstants.FailureCount, failures.Count));
 
                 ValidationMetrics.ValidationDuration.Record(stopwatch.Elapsed.TotalMilliseconds,
-                    new KeyValuePair<string, object?>("request.name", requestName),
-                    new KeyValuePair<string, object?>("validator.count", validatorCount),
-                    new KeyValuePair<string, object?>("status", "failed"));
+                    new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName),
+                    new KeyValuePair<string, object?>(ValidationBehaviorConstants.ValidatorCount, validatorCount),
+                    new KeyValuePair<string, object?>(ValidationBehaviorConstants.Status, ValidationBehaviorConstants.Failed));
 
                 throw new ValidationException(failures);
             }
 
             // Record successful validation duration
             ValidationMetrics.ValidationDuration.Record(stopwatch.Elapsed.TotalMilliseconds,
-                new KeyValuePair<string, object?>("request.name", requestName),
-                new KeyValuePair<string, object?>("validator.count", validatorCount),
-                new KeyValuePair<string, object?>("status", "success"));
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName),
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.ValidatorCount, validatorCount),
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.Status, ValidationBehaviorConstants.Success));
 
             return await next();
         }
-        catch (ValidationException)
-        {
-            // Already tracked above, just rethrow
-            throw;
-        }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not ValidationException)
         {
             stopwatch.Stop();
 
             // Track unexpected errors during validation
             ValidationMetrics.ValidationDuration.Record(stopwatch.Elapsed.TotalMilliseconds,
-                new KeyValuePair<string, object?>("request.name", requestName),
-                new KeyValuePair<string, object?>("validator.count", validatorCount),
-                new KeyValuePair<string, object?>("status", "error"),
-                new KeyValuePair<string, object?>("exception.type", ex.GetType().Name));
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.RequestName, requestName),
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.ValidatorCount, validatorCount),
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.Status, ValidationBehaviorConstants.Error),
+                new KeyValuePair<string, object?>(ValidationBehaviorConstants.ExceptionType, ex.GetType().Name));
 
             throw;
         }

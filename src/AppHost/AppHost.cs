@@ -9,10 +9,10 @@ var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataVolume()
-    // .WithBindMount(Path.Combine(Directory.GetCurrentDirectory(), "realms.json"),
-    //     "/opt/keycloak/data/import/realms.json", true)
+    .WithBindMount(Path.Combine(AppContext.BaseDirectory, "realms.json"),
+        "/opt/keycloak/data/import/realms.json", true)
     .WithEnvironment("KC_DB_URL_PROPERTIES", "?ssl=false")
-    // .WithEnvironment("KEYCLOAK_IMPORT", "/opt/keycloak/data/import/realms.json")
+    .WithEnvironment("KEYCLOAK_IMPORT", "/opt/keycloak/data/import/realms.json")
     .WithEnvironment("KC_HTTP_ENABLED", "true")
     .WithEnvironment("KEYCLOAK_IMPORT_REALM_VALIDATE_SIGNATURE_ALGORITHM", "true")
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_USERNAME", username)
@@ -42,4 +42,4 @@ builder
     .WithReference(reactApp)
     .WithReference(api);
 
-builder.Build().Run();
+await builder.Build().RunAsync();
