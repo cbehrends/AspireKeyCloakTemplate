@@ -15,6 +15,32 @@ export default function NavigationHeader() {
 		logout();
 	};
 
+	let userContent;
+	if (loading) {
+		userContent = <span className="text-gray-400">Loading...</span>;
+	} else if (user?.isAuthenticated) {
+		userContent = (
+			<>
+				<span className="mr-4">Hello, {user.name || "User"}</span>
+				<button
+					onClick={handleLogout}
+					className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
+				>
+					Logout
+				</button>
+			</>
+		);
+	} else {
+		userContent = (
+			<a
+				href="/bff/login"
+				className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
+			>
+				Login
+			</a>
+		);
+	}
+
 	return (
 		<>
 			<header className="p-4 flex items-center justify-between bg-gray-800 text-white shadow-lg">
@@ -37,28 +63,7 @@ export default function NavigationHeader() {
 						</Link>
 					</h1>
 				</div>
-				<div>
-					{loading ? (
-						<span className="text-gray-400">Loading...</span>
-					) : user?.isAuthenticated ? (
-						<>
-							<span className="mr-4">Hello, {user.name || "User"}</span>
-							<button
-								onClick={handleLogout}
-								className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
-							>
-								Logout
-							</button>
-						</>
-					) : (
-						<a
-							href="/bff/login"
-							className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
-						>
-							Login
-						</a>
-					)}
-				</div>
+				<div>{userContent}</div>
 			</header>
 
 			<aside

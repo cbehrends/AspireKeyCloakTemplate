@@ -1,20 +1,24 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 
+let queryClientSingleton: QueryClient | undefined;
+
 export function getContext() {
-	const queryClient = new QueryClient();
+	queryClientSingleton ??= new QueryClient();
 	return {
-		queryClient,
+		queryClient: queryClientSingleton,
 	};
+}
+
+interface ProviderProps {
+	readonly children: ReactNode;
+	readonly queryClient: QueryClient;
 }
 
 export function Provider({
 	children,
 	queryClient,
-}: {
-	children: ReactNode;
-	queryClient: QueryClient;
-}) {
+}: Readonly<ProviderProps>) {
 	return (
 		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 	);
