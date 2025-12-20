@@ -42,13 +42,13 @@ jobs:
       - name: Build unit test projects
         shell: powershell
         run: |
-          dotnet build AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj
-          dotnet build AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj
+          dotnet build src/AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj
+          dotnet build src/AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj
       - name: Run unit tests with Coverlet for code coverage
         shell: powershell
         run: |
-          dotnet test AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage.opencover.xml
-          dotnet test AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage-sharedkernel.opencover.xml
+          dotnet test src/AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage.opencover.xml
+          dotnet test src/AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage-sharedkernel.opencover.xml
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
