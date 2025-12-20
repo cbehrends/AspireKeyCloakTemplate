@@ -39,6 +39,14 @@ jobs:
         run: |
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
+      - name: Build test projects
+        shell: powershell
+        run: |
+          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
+      - name: Install Playwright browsers
+        shell: powershell
+        run: |
+          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
       - name: Run tests with Coverlet for code coverage
         shell: powershell
         run: |
