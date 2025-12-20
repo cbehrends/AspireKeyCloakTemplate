@@ -39,23 +39,21 @@ jobs:
         run: |
           New-Item -Path ${{ runner.temp }}\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path ${{ runner.temp }}\scanner
-      - name: Build test projects
+      - name: Build unit test projects
         shell: powershell
         run: |
-          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
-      - name: Install Playwright browsers
+          dotnet build AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj
+          dotnet build AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj
+      - name: Run unit tests with Coverlet for code coverage
         shell: powershell
         run: |
-          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
-      - name: Run tests with Coverlet for code coverage
-        shell: powershell
-        run: |
-          dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage.opencover.xml
+          dotnet test AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage.opencover.xml
+          dotnet test AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./TestResults/coverage-sharedkernel.opencover.xml
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"cbehrends_AspireKeyCloakTemplate" /o:"cbehrends" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
+          ${{ runner.temp }}\scanner\dotnet-sonarscanner begin /k:"cbehrends_AspireKeyCloakTemplate" /o:"cbehrends" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.opencover.reportsPaths="**/coverage*.opencover.xml"
           dotnet build
           ${{ runner.temp }}\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
