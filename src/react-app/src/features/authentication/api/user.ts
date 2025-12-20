@@ -1,4 +1,4 @@
-import type { BffUser } from "@/features/authentication/types";
+import type {BffUser} from "@/features/authentication/types";
 
 export async function fetchBffUser(): Promise<BffUser> {
 	try {
@@ -13,7 +13,7 @@ export async function fetchBffUser(): Promise<BffUser> {
 }
 
 export async function logout(redirectUrl?: string): Promise<void> {
-	const url = new URL("/bff/logout", window.location.origin);
+	const url = new URL("/bff/logout", globalThis.location.origin);
 	if (redirectUrl) {
 		url.searchParams.append("redirectUrl", redirectUrl);
 	}
@@ -25,18 +25,17 @@ export async function logout(redirectUrl?: string): Promise<void> {
 		});
 		if (res.ok) {
 			// Redirect to the logout redirect URL if provided
-			const finalUrl = res.url || redirectUrl || "/";
-			window.location.href = finalUrl;
+      globalThis.location.href = res.url || redirectUrl || "/";
 		}
 	} catch (error) {
 		console.error("Logout failed:", error);
 		// Fallback redirect
-		window.location.href = "/";
+    globalThis.location.href = "/";
 	}
 }
 
 export async function login(returnUrl?: string, claimsChallenge?: string): Promise<void> {
-	const url = new URL("/bff/login", window.location.origin);
+	const url = new URL("/bff/login", globalThis.location.origin);
 	if (returnUrl) {
 		url.searchParams.append("returnUrl", returnUrl);
 	}
@@ -51,13 +50,12 @@ export async function login(returnUrl?: string, claimsChallenge?: string): Promi
 		});
 		if (res.ok) {
 			// Redirect to the login redirect URL if provided
-			const finalUrl = res.url || returnUrl || "/";
-			window.location.href = finalUrl;
+      globalThis.location.href = res.url || returnUrl || "/";
 		}
 	} catch (error) {
 		console.error("Login failed:", error);
 		// Fallback redirect
-		window.location.href = "/";
+    globalThis.location.href = "/";
 	}
 }
 

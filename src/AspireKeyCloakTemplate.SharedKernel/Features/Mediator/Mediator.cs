@@ -40,7 +40,7 @@ public class Mediator : IMediator
         }
     }
 
-    private class RequestHandlerWrapper<TRequest, TResponse>
+    private sealed class RequestHandlerWrapper<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         public Task<TResponse> Handle(IRequest<TResponse> request, CancellationToken cancellationToken,

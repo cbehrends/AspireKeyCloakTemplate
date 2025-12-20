@@ -13,6 +13,33 @@ export default function Header() {
 		logout();
 	};
 
+	const renderUserSection = () => {
+		if (loading) return null;
+		if (user?.isAuthenticated) {
+			return (
+				<>
+					<span className="mr-4">Hello, {user?.name || "User"}</span>
+					<button
+						onClick={handleLogout}
+						className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
+						aria-label="Logout"
+					>
+						Logout
+					</button>
+				</>
+			);
+		}
+		return (
+			<a
+				href="/bff/login"
+				className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
+				aria-label="Login"
+			>
+				Login
+			</a>
+		);
+	};
+
 	return (
 		<>
 			<header
@@ -40,28 +67,7 @@ export default function Header() {
 						</Link>
 					</h1>
 				</div>
-				<div>
-					{loading ? null : user?.isAuthenticated ? (
-						<>
-							<span className="mr-4">Hello, {user.name || "User"}</span>
-							<button
-								onClick={handleLogout}
-								className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
-								aria-label="Logout"
-							>
-								Logout
-							</button>
-						</>
-					) : (
-						<a
-							href="/bff/login"
-							className="px-3 py-1 bg-green-600 rounded hover:bg-green-700 inline-block"
-							aria-label="Login"
-						>
-							Login
-						</a>
-					)}
-				</div>
+				<div>{renderUserSection()}</div>
 			</header>
 
 			<aside
@@ -69,24 +75,19 @@ export default function Header() {
 				className={`fixed top-0 left-0 h-full w-80 bg-gray-900 text-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
 					isOpen ? "translate-x-0" : "-translate-x-full"
 				}`}
-				role="navigation"
-				aria-label="Main navigation"
-				aria-hidden={!isOpen}
-				tabIndex={isOpen ? 0 : -1}
 			>
-				<div className="flex items-center justify-between p-4 border-b border-gray-700">
-					<h2 className="text-xl font-bold">Navigation</h2>
-					<button
-						type="button"
-						onClick={() => setIsOpen(false)}
-						className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-						aria-label="Close navigation menu"
-					>
-						<X size={24} />
-					</button>
-				</div>
-
-				<nav className="flex-1 p-4 overflow-y-auto">
+				<nav aria-label="Main navigation" className="flex-1 p-4 overflow-y-auto">
+					<div className="flex items-center justify-between p-4 border-b border-gray-700">
+						<h2 className="text-xl font-bold">Navigation</h2>
+						<button
+							type="button"
+							onClick={() => setIsOpen(false)}
+							className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+							aria-label="Close navigation menu"
+						>
+							<X size={24} />
+						</button>
+					</div>
 					<Link
 						to="/"
 						onClick={() => setIsOpen(false)}

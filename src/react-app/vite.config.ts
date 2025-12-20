@@ -17,7 +17,7 @@ const config = defineConfig({
     viteReact(),
   ],
   server: {
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    port: process.env.PORT ? Number.parseInt(process.env.PORT) : 3000,
     proxy: {
       '/bff': {
         target: process.env.BFF_URL || 'https://localhost:6001',
