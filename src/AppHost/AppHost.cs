@@ -7,7 +7,7 @@ var password = builder.AddParameter("password", "password", secret: true);
 
 var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume()
     .WithBindMount(Path.Combine(AppContext.BaseDirectory, "realms.json"),
         "/opt/keycloak/data/import/realms.json", true)

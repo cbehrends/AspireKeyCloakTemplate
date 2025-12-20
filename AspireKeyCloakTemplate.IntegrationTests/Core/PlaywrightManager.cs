@@ -10,7 +10,7 @@ public class PlaywrightManager : IAsyncLifetime
 {
     private IPlaywright? _playwright;
     private static bool IsDebugging => Debugger.IsAttached;
-    private static bool IsHeadless => false; //sDebugging is false;
+    private static bool IsHeadless => IsDebugging is false;
 
     internal IBrowser Browser { get; set; } = null!;
 
