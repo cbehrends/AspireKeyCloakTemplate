@@ -15,7 +15,7 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for SonarCloud to accurately assign "blame" for code smells
+          fetch-depth: 0 # Required for SonarCloud SCM features
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -23,10 +23,20 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Install SonarScanner for .NET
         shell: powershell
@@ -40,36 +50,37 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 1. Start Analysis
-          # Includes React sources, excludes migrations/tests, and sets coverage paths
+          # Defines source root, exclusions for migrations/tests, and coverage file locations
           dotnet-sonarscanner begin `
             /k:"cbehrends_AspireKeyCloakTemplate" `
             /o:"cbehrends" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.sources="." `
+            /d:sonar.sources="src" `
             /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**" `
             /d:sonar.tests="src/react-app/**/*.test.ts,src/react-app/**/*.test.tsx,**/*Tests.cs,**/*IntegrationTests.cs" `
             /d:sonar.test.exclusions="**/*Tests.cs,**/*IntegrationTests.cs" `
             /d:sonar.javascript.lcov.reportPaths="src/react-app/coverage/lcov.info" `
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
 
-          # 2. Build and Test React (Generate LCOV)
-          npm --prefix src/react-app install
-          npm --prefix src/react-app test -- --watchAll=false --coverage --coverageReporters="lcov"
+          # 2. Build and Test React (pnpm)
+          # Ensure coverage is generated in LCOV format
+          pnpm --prefix src/react-app install
+          pnpm --prefix src/react-app test -- --watchAll=false --coverage --coverageReporters="lcov"
 
-          # 3. Install Playwright (if required for Integration Tests)
-          # Note: We build the project once here to ensure the Playwright executable is available
+          # 3. Prepare Playwright Browsers
           dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
           pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
 
           # 4. Build .NET Solution
           dotnet build --configuration Release
 
-          # 5. Run .NET Tests (Generate OpenCover)
+          # 5. Run .NET Tests (Unit & Integration)
+          # Collects coverage in OpenCover format for SonarCloud compatibility
           dotnet test --configuration Release --no-build `
             --collect:"XPlat Code Coverage" `
             --results-directory ./TestResults/ `
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-          # 6. End Analysis & Upload to SonarCloud
+          # 6. End Analysis & Upload Results
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
