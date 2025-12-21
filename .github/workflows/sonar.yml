@@ -56,7 +56,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner begin /k:"cbehrends_AspireKeyCloakTemplate" /o:"cbehrends" /d: sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs. vscoveragexml.reportsPaths="**/TestResults/**/*. xml"
+          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner begin /k:"cbehrends_AspireKeyCloakTemplate" /o:"cbehrends" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths="**/TestResults/**/*.xml"
 
           dotnet build --configuration Release
 
@@ -65,4 +65,4 @@ jobs:
           Write-Host "Looking for coverage files..."
           Get-ChildItem -Path .  -Filter "*.xml" -Recurse | Where-Object { $_.FullName -like "*TestResults*" } | ForEach-Object { Write-Host $_. FullName }
 
-          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end /d:sonar. token="${{ secrets.SONAR_TOKEN }}"
+          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
