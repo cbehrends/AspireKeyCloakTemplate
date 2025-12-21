@@ -1,4 +1,10 @@
 # AspireKeyCloakTemplate
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cbehrends_AspireKeyCloakTemplate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cbehrends_AspireKeyCloakTemplate)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=cbehrends_AspireKeyCloakTemplate&metric=bugs)](https://sonarcloud.io/summary/new_code?id=cbehrends_AspireKeyCloakTemplate)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=cbehrends_AspireKeyCloakTemplate&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=cbehrends_AspireKeyCloakTemplate)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=cbehrends_AspireKeyCloakTemplate&metric=coverage)](https://sonarcloud.io/summary/new_code?id=cbehrends_AspireKeyCloakTemplate)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=cbehrends_AspireKeyCloakTemplate&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=cbehrends_AspireKeyCloakTemplate)
+
 
 Opinionated, end-to-end .NET + React template integrating:
 
