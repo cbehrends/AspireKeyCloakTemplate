@@ -40,7 +40,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 	shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<html lang="en">
 			<head>
@@ -58,8 +58,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 							name: "Tanstack Router",
 							render: <TanStackRouterDevtoolsPanel />,
 						},
-						TanStackQueryDevtools,
-						authStoreDevtools,
+						...(TanStackQueryDevtools ? [TanStackQueryDevtools] : []),
+						...(authStoreDevtools ? [authStoreDevtools] : []),
 					]}
 				/>
 				<Scripts />

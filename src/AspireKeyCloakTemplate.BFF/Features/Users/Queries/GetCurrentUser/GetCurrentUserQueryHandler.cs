@@ -6,7 +6,7 @@ namespace AspireKeyCloakTemplate.BFF.Features.Users.Queries.GetCurrentUser;
 /// <summary>
 ///     Handler for GetCurrentUserQuery
 /// </summary>
-public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, UserInfo>
+public partial class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, UserInfo>
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<GetCurrentUserQueryHandler> _logger;
@@ -29,7 +29,7 @@ public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, U
             var email = user.FindFirstValue("email");
             var claims = user.Claims.Select(c => new UserClaim(c.Type, c.Value));
 
-            _logger.LogInformation("Retrieved current user information for {UserName}", name);
+            LogRetrievedCurrentUserInformationForUsername(name);
 
             return Task.FromResult(new UserInfo(
                 true,
@@ -38,7 +38,7 @@ public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, U
                 claims));
         }
 
-        _logger.LogInformation("User is not authenticated");
+        LogUserIsNotAuthenticated();
 
         return Task.FromResult(new UserInfo(
             false,
@@ -46,4 +46,10 @@ public class GetCurrentUserQueryHandler : IRequestHandler<GetCurrentUserQuery, U
             null,
             Enumerable.Empty<UserClaim>()));
     }
+
+    [LoggerMessage(LogLevel.Information, "Retrieved current user information for {UserName}")]
+    partial void LogRetrievedCurrentUserInformationForUsername(string? UserName);
+
+    [LoggerMessage(LogLevel.Information, "User is not authenticated")]
+    partial void LogUserIsNotAuthenticated();
 }

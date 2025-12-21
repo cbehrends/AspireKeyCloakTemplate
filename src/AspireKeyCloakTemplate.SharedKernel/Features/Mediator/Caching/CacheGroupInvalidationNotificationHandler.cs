@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace AspireKeyCloakTemplate.SharedKernel.Features.Mediator.Caching;
 
-public class CacheGroupInvalidationNotificationHandler(
+public partial class CacheGroupInvalidationNotificationHandler(
     IDistributedCache cache,
     ILogger<CacheGroupInvalidationNotificationHandler> logger)
     : INotificationHandler<CacheGroupInvalidationNotification>
 {
     public async Task Handle(CacheGroupInvalidationNotification notification, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Invalidating cache for group {CacheGroupKey}", notification.CacheGroupKey);
+        LogInvalidatingCacheForGroupCachegroupkey(logger, notification.CacheGroupKey);
         var cachedGroup = await cache.GetStringAsync(notification.CacheGroupKey, cancellationToken);
 
         if (!string.IsNullOrEmpty(cachedGroup))
@@ -24,4 +24,7 @@ public class CacheGroupInvalidationNotificationHandler(
             await cache.RemoveAsync(notification.CacheGroupKey, cancellationToken);
         }
     }
+
+    [LoggerMessage(LogLevel.Information, "Invalidating cache for group {CacheGroupKey}")]
+    static partial void LogInvalidatingCacheForGroupCachegroupkey(ILogger<CacheGroupInvalidationNotificationHandler> logger, string CacheGroupKey);
 }

@@ -57,8 +57,8 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.sources="src" `
-            /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**" `
-            /d:sonar.tests="src/react-app/**/*.test.ts,src/react-app/**/*.test.tsx,**/*Tests.cs,**/*IntegrationTests.cs" `
+            /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**,**/*.UnitTests/**,**/*.IntegrationTests/**" `
+            /d:sonar.tests="src/react-app/**/*.test.ts,src/react-app/**/*.test.tsx" `
             /d:sonar.test.exclusions="**/*Tests.cs,**/*IntegrationTests.cs" `
             /d:sonar.javascript.lcov.reportPaths="src/react-app/coverage/lcov.info" `
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"

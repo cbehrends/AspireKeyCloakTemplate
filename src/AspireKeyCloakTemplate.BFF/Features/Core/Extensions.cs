@@ -103,13 +103,10 @@ internal static class Extensions
                     if (builder.Environment.IsDevelopment()) options.RequireHttpsMetadata = false;
                 });
 
-        builder.Services.AddAuthorization(options =>
-        {
-            options.DefaultPolicy =
-                new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .RequireAuthenticatedUser()
-                    .Build();
-        });
+        builder.Services.AddAuthorizationBuilder()
+            .SetDefaultPolicy(new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build());
 
         // Configure SessionStore after all services are registered
         builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)

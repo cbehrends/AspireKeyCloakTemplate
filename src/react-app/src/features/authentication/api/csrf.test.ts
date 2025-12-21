@@ -20,24 +20,24 @@ describe("fetchAndStoreXsrfToken", () => {
 	});
 
 	it("should fetch the XSRF token and update the store on success", async () => {
-		(global.fetch as any).mockResolvedValue({
+		vi.mocked(global.fetch).mockResolvedValue({
 			ok: true,
 			json: async () => ({ token: "test-token" }),
-		});
+		} as Response);
 		const token = await fetchAndStoreXsrfToken();
 		expect(token).toBe("test-token");
 		expect(setStateMock).toHaveBeenCalledWith(expect.any(Function));
 	});
 
 	it("should return null and not update the store if fetch fails", async () => {
-		(global.fetch as any).mockRejectedValue(new Error("fail"));
+		vi.mocked(global.fetch).mockRejectedValue(new Error("fail"));
 		const token = await fetchAndStoreXsrfToken();
 		expect(token).toBeNull();
 		expect(setStateMock).not.toHaveBeenCalled();
 	});
 
 	it("should return null and not update the store if response is not ok", async () => {
-		(global.fetch as any).mockResolvedValue({ ok: false });
+		vi.mocked(global.fetch).mockResolvedValue({ ok: false } as Response);
 		const token = await fetchAndStoreXsrfToken();
 		expect(token).toBeNull();
 		expect(setStateMock).not.toHaveBeenCalled();

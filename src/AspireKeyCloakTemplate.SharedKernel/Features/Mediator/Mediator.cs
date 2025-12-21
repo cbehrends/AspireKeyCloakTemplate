@@ -17,7 +17,7 @@ public class Mediator : IMediator
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
+        ArgumentNullException.ThrowIfNull(request);
 
         var requestType = request.GetType();
         var responseType = typeof(TResponse);
@@ -31,7 +31,7 @@ public class Mediator : IMediator
         try
         {
             return (Task<TResponse>)handleMethod!.Invoke(handlerWrapper,
-                [request, cancellationToken, _serviceProvider])!;
+                [request, _serviceProvider, cancellationToken])!;
         }
         catch (TargetInvocationException ex) when (ex.InnerException != null)
         {
@@ -43,8 +43,8 @@ public class Mediator : IMediator
     private sealed class RequestHandlerWrapper<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
-        public Task<TResponse> Handle(IRequest<TResponse> request, CancellationToken cancellationToken,
-            IServiceProvider serviceProvider)
+        public Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider serviceProvider,
+            CancellationToken cancellationToken)
         {
             Task<TResponse> Handler()
             {

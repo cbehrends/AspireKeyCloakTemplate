@@ -68,7 +68,7 @@ public class MediatorConfiguration
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>))
                     .ToList()
             })
-            .Where(t => t.Interfaces.Any())
+            .Where(t => t.Interfaces.Count != 0)
             .ToList();
 
         foreach (var handlerType in handlerTypes)
@@ -90,7 +90,7 @@ public class MediatorConfiguration
                     .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidator<>))
                     .ToList()
             })
-            .Where(t => t.Interfaces.Any())
+            .Where(t => t.Interfaces.Count != 0)
             .ToList();
 
         foreach (var validatorType in validatorTypes)
