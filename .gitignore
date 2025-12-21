@@ -143,4 +143,25 @@ appsettings.Local.json
 *.sqlite
 *.bak
 
+# ----- Docker -----
+docker-compose.override.yml
+*.tar
+*.tar.gz
+
+# ----- Build & CI -----
+CHANGELOG.md
+.release-version
+release.json
+
+# ----- macOS -----
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ----- GitHub Actions -----
+.github/workflows/temp/
+
 # End of .gitignore

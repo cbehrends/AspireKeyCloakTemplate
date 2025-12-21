@@ -1,13 +1,14 @@
 <Solution>
-  <Folder Name="/Docs/">
-    <File Path="docs\BFF.md" />
-    <File Path="README.md" />
-  </Folder>
-  <Folder Name="/Hosting/">
-    <Project Path="src/AspireKeyCloakTemplate.Gateway.UnitTests/AspireKeyCloakTemplate.Gateway.UnitTests.csproj" />
-    <Project Path="src/AspireKeyCloakTemplate.Gateway/AspireKeyCloakTemplate.Gateway.csproj" />
-    <Project Path="src/AspireKeyCloakTemplate.ServiceDefaults/AspireKeyCloakTemplate.ServiceDefaults.csproj" />
-  </Folder>
-  <Project Path="src/AppHost/AppHost.csproj" />
-  <Project Path="src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj" />
+    <Folder Name="/Hosting/">
+        <Project Path="AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj"/>
+        <Project Path="src\AspireKeyCloakTemplate.BFF.UnitTests\AspireKeyCloakTemplate.BFF.UnitTests.csproj"/>
+        <Project Path="src\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj"/>
+    </Folder>
+    <Folder Name="/Infrastructure/">
+        <Project Path="src/AspireKeyCloakTemplate.SharedKernel/AspireKeyCloakTemplate.SharedKernel.csproj"/>
+        <Project
+                Path="src/AspireKeyCloakTemplate.SharedKernel.UnitTests/AspireKeyCloakTemplate.SharedKernel.UnitTests.csproj"/>
+    </Folder>
+    <Project Path="src/AppHost/AppHost.csproj"/>
+    <Project Path="src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj"/>
 </Solution>

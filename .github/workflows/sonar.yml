@@ -1,0 +1,76 @@
+name: SonarQube
+
+on:
+  push:
+    branches: [ main, release ]
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+jobs:
+  build:
+    name: Build, Test, and Analyze
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner. os }}-sonar
+
+      - name: Cache SonarScanner for .NET
+        id: sonar-scanner-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}\sonarscanner
+          key: ${{ runner.os }}-sonarscanner
+          restore-keys: ${{ runner.os }}-sonarscanner
+
+      - name: Install SonarScanner for .NET
+        if: steps.sonar-scanner-cache.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path ${{ runner.temp }}\sonarscanner | Out-Null
+          dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\sonarscanner
+
+      - name: Install Playwright browsers
+        shell: powershell
+        run: |
+          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
+          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
+
+      - name: Build, Test, and Analyze with SonarCloud
+        shell: powershell
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner begin `
+            /k:"cbehrends_AspireKeyCloakTemplate" `
+            /o:"cbehrends" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+
+          dotnet build --configuration Release
+
+          dotnet test `
+            --configuration Release `
+            --no-build `
+            --settings .runsettings `
+            /p:CollectCoverage=true `
+            /p:CoverletOutputFormat=opencover
+
+          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

@@ -1,13 +1,16 @@
+using Projects;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var username = builder.AddParameter("username", "admin");
-var password = builder.AddParameter("password","password", secret: true);
+var password = builder.AddParameter("password", "password", secret: true);
 
 var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
-    .WithLifetime(ContainerLifetime.Persistent)
+    .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume()
-    .WithBindMount(Path.Combine(Directory.GetCurrentDirectory(), "realms.json"), "/opt/keycloak/data/import/realms.json", isReadOnly: true)
+    .WithBindMount(Path.Combine(AppContext.BaseDirectory, "realms.json"),
+        "/opt/keycloak/data/import/realms.json", true)
     .WithEnvironment("KC_DB_URL_PROPERTIES", "?ssl=false")
     .WithEnvironment("KEYCLOAK_IMPORT", "/opt/keycloak/data/import/realms.json")
     .WithEnvironment("KC_HTTP_ENABLED", "true")
@@ -16,7 +19,7 @@ var keyCloak = builder
     .WithEnvironment("KC_BOOTSTRAP_ADMIN_PASSWORD", password);
 
 var api = builder
-    .AddProject<Projects.AspireKeyCloakTemplate_API>("api", launchProfileName:"https")
+    .AddProject<AspireKeyCloakTemplate_API>("api", "https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
     .WaitFor(keyCloak);
@@ -24,7 +27,7 @@ var api = builder
 var reactApp = builder
     .AddViteApp("react-app", "../react-app")
     .WithPnpmPackageInstallation()
-    .WithEndpoint(endpointName: "http", endpoint =>
+    .WithEndpoint("http", endpoint =>
     {
         // This sets the *exposed* port Aspire uses to communicate with the app
         endpoint.Port = 3000;
@@ -33,10 +36,10 @@ var reactApp = builder
     .WithEnvironment("PORT", "3000");
 
 builder
-    .AddProject<Projects.AspireKeyCloakTemplate_Gateway>("gateway", launchProfileName: "https")
+    .AddProject<AspireKeyCloakTemplate_BFF>("bff", "https")
     .WithExternalHttpEndpoints()
     .WithReference(keyCloak)
     .WithReference(reactApp)
     .WithReference(api);
 
-builder.Build().Run();
+await builder.Build().RunAsync();
