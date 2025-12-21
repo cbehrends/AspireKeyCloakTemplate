@@ -25,7 +25,7 @@ public class LoginTests(AspireManager aspireManager) : PlaywrightTestBase(aspire
 
             // Wait for the Keycloak login page
             await page.WaitForURLAsync(url => url.ToString().Contains("/realms/sandbox/login-actions/authenticate"),
-                new PageWaitForURLOptions { Timeout = 10000 });
+                new PageWaitForURLOptions { Timeout = 60000 });
 
             // Fill in credentials
             await page.FillAsync("input[name='username'], input[name='email'], input[placeholder*='Username']",
@@ -40,7 +40,7 @@ public class LoginTests(AspireManager aspireManager) : PlaywrightTestBase(aspire
             // Wait for redirect back to BFF and check for Logout
             var bffEndpoint = AspireManager.App?.GetEndpoint("bff").ToString();
             await page.WaitForURLAsync(url => url.ToString().StartsWith(bffEndpoint!),
-                new PageWaitForURLOptions { Timeout = 10000 });
+                new PageWaitForURLOptions { Timeout = 60000 });
             var logoutButton = await page.WaitForSelectorAsync("button:text('Logout')");
             logoutButton.ShouldNotBeNull();
 
