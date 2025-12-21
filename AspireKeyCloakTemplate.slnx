@@ -1,6 +1,6 @@
 <Solution>
     <Folder Name="/Hosting/">
-        <Project Path="AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj"/>
+        <Project Path="src\AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj"/>
         <Project Path="src\AspireKeyCloakTemplate.BFF.UnitTests\AspireKeyCloakTemplate.BFF.UnitTests.csproj"/>
         <Project Path="src\AspireKeyCloakTemplate.BFF\AspireKeyCloakTemplate.BFF.csproj"/>
     </Folder>
