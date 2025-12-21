@@ -1,10 +1,10 @@
-name: SonarQube
+name: SonarQube Analysis
 
 on:
   push:
     branches: [ main, release ]
   pull_request:
-    types:  [ opened, synchronize, reopened ]
+    types: [ opened, synchronize, reopened ]
 
 jobs:
   build:
@@ -15,54 +15,61 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Required for SonarCloud to accurately assign "blame" for code smells
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: zulu
-          java-version: 17
+          distribution: 'zulu'
+          java-version: '17'
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~\sonar\cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+          node-version: 20
 
-      - name: Cache SonarScanner for .NET
-        id: sonar-scanner-cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ runner.temp }}\sonarscanner
-          key:  ${{ runner.os }}-sonarscanner
-          restore-keys:  ${{ runner.os }}-sonarscanner
-
-      - name:  Install SonarScanner for . NET
-        if: steps.sonar-scanner-cache.outputs. cache-hit != 'true'
+      - name: Install SonarScanner for .NET
         shell: powershell
         run: |
-          New-Item -ItemType Directory -Path ${{ runner.temp }}\sonarscanner | Out-Null
-          dotnet tool install dotnet-sonarscanner --tool-path ${{ runner.temp }}\sonarscanner
+          dotnet tool install --global dotnet-sonarscanner
 
-      - name:  Install Playwright browsers
-        shell:  powershell
-        run: |
-          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
-          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
-
-      - name: Build, Test, and Analyze with SonarCloud
+      - name: Build, Test, and Analyze
         shell: powershell
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner begin /k:"cbehrends_AspireKeyCloakTemplate" /o:"cbehrends" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths="**/TestResults/**/*.xml"
+          # 1. Start Analysis
+          # Includes React sources, excludes migrations/tests, and sets coverage paths
+          dotnet-sonarscanner begin `
+            /k:"cbehrends_AspireKeyCloakTemplate" `
+            /o:"cbehrends" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.sources="." `
+            /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**" `
+            /d:sonar.tests="src/react-app/**/*.test.ts,src/react-app/**/*.test.tsx,**/*Tests.cs,**/*IntegrationTests.cs" `
+            /d:sonar.test.exclusions="**/*Tests.cs,**/*IntegrationTests.cs" `
+            /d:sonar.javascript.lcov.reportPaths="src/react-app/coverage/lcov.info" `
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
 
+          # 2. Build and Test React (Generate LCOV)
+          npm --prefix src/react-app install
+          npm --prefix src/react-app test -- --watchAll=false --coverage --coverageReporters="lcov"
+
+          # 3. Install Playwright (if required for Integration Tests)
+          # Note: We build the project once here to ensure the Playwright executable is available
+          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
+          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
+
+          # 4. Build .NET Solution
           dotnet build --configuration Release
 
-          dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults/ -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          # 5. Run .NET Tests (Generate OpenCover)
+          dotnet test --configuration Release --no-build `
+            --collect:"XPlat Code Coverage" `
+            --results-directory ./TestResults/ `
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-          Write-Host "Looking for coverage files..."
-          Get-ChildItem -Path .  -Filter "*.xml" -Recurse | Where-Object { $_.FullName -like "*TestResults*" } | ForEach-Object { Write-Host $_. FullName }
-
-          ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          # 6. End Analysis & Upload to SonarCloud
+          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
