@@ -36,7 +36,7 @@ jobs:
         with:
           path: ${{ runner.temp }}\sonarscanner
           key:  ${{ runner.os }}-sonarscanner
-          restore-keys:  ${{ runner.os }}-sonarscanner
+          restore-keys: ${{ runner.os }}-sonarscanner
 
       - name:  Install SonarScanner for . NET
         if: steps.sonar-scanner-cache.outputs. cache-hit != 'true'
@@ -61,7 +61,7 @@ jobs:
             /o:"cbehrends" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.cs. vscoveragexml.reportsPaths="**/TestResults/**/*.xml"
+            /d:sonar.cs. vscoveragexml.reportsPaths="**/TestResults/**/*. xml"
 
           dotnet build --configuration Release
 
@@ -72,9 +72,9 @@ jobs:
             --results-directory ./TestResults/ `
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-          # Debug: List all coverage files
+          # Debug:  List all coverage files
           Write-Host "Looking for coverage files..."
-          Get-ChildItem -Path .  -Filter "*.xml" -Recurse | Where-Object { $_. FullName -like "*TestResults*" } | ForEach-Object { Write-Host $_.FullName }
+          Get-ChildItem -Path .  -Filter "*.xml" -Recurse | Where-Object { $_.FullName -like "*TestResults*" } | ForEach-Object { Write-Host $_. FullName }
 
           ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner end `
             /d:sonar.token="${{ secrets. SONAR_TOKEN }}"
