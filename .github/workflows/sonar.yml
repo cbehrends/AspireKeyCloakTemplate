@@ -28,7 +28,7 @@ jobs:
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner. os }}-sonar
 
       - name: Cache SonarScanner for .NET
         id: sonar-scanner-cache
@@ -59,6 +59,7 @@ jobs:
           ${{ runner.temp }}\sonarscanner\dotnet-sonarscanner begin `
             /k:"cbehrends_AspireKeyCloakTemplate" `
             /o:"cbehrends" `
+            /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
 
