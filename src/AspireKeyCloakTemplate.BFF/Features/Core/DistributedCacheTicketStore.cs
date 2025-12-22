@@ -11,7 +11,7 @@ namespace AspireKeyCloakTemplate.BFF.Features.Core;
 ///     keeping tokens and claims server-side.
 ///     Instrumented with OpenTelemetry metrics for cache hit/miss tracking.
 /// </summary>
-internal sealed partial class DistributedCacheTicketStore(
+public sealed partial class DistributedCacheTicketStore(
     IDistributedCache cache,
     ILogger<DistributedCacheTicketStore> logger) : ITicketStore
 {
