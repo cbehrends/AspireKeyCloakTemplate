@@ -5,11 +5,16 @@ var builder = DistributedApplication.CreateBuilder(args);
 var username = builder.AddParameter("username", "admin");
 var password = builder.AddParameter("password", "password", secret: true);
 
+// Determine realms.json path: use env var if set, else default to /cfg/keycloak/realms.json at repo root
+var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../.."));
+var defaultRealmsJsonPath = Path.Combine(repoRoot, "cfg", "keycloak", "realms.json");
+var realmsJsonPath = Environment.GetEnvironmentVariable("REALMS_JSON_PATH") ?? defaultRealmsJsonPath;
+
 var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
     .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume()
-    .WithBindMount(Path.Combine(AppContext.BaseDirectory, "realms.json"),
+    .WithBindMount(realmsJsonPath,
         "/opt/keycloak/data/import/realms.json", true)
     .WithEnvironment("KC_DB_URL_PROPERTIES", "?ssl=false")
     .WithEnvironment("KEYCLOAK_IMPORT", "/opt/keycloak/data/import/realms.json")

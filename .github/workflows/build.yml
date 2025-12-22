@@ -97,6 +97,11 @@ jobs:
       - name: Run unit tests
         run: dotnet test src/AspireKeyCloakTemplate.BFF.UnitTests/AspireKeyCloakTemplate.BFF.UnitTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
+      - name: Run integration tests
+        env:
+          REALMS_JSON_PATH: src/AppHost/realms.json
+        run: dotnet test src/AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj --no-restore --verbosity normal --logger "trx;LogFileName=integration-test-results.trx"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

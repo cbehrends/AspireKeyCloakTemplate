@@ -150,6 +150,31 @@ Common scripts:
 
 ---
 
+## Integration Tests: Reliable Local & CI Execution
+
+Integration tests require the Keycloak realms.json file to be accessible to the AppHost. The path to this file is controlled by the `REALMS_JSON_PATH` environment variable. If not set, the default is `/cfg/keycloak/realms.json` at the repo root.
+
+### Local Run
+
+To run integration tests locally and ensure the correct realms.json is used:
+
+```sh
+export REALMS_JSON_PATH=cfg/keycloak/realms.json
+# or use your shell's equivalent
+
+dotnet test src/AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
+```
+
+### GitHub Actions
+
+The workflow sets `REALMS_JSON_PATH` automatically for integration test steps. No manual action is needed.
+
+### Troubleshooting
+- If tests fail due to missing realms.json, ensure the environment variable is set and the file exists at the specified path (`cfg/keycloak/realms.json`).
+- For custom test environments, you may override `REALMS_JSON_PATH` as needed.
+
+---
+
 ## Notes and troubleshooting
 
 - Keycloak: Provide Keycloak server configuration and client credentials when exercising auth-protected features.
