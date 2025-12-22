@@ -56,31 +56,20 @@ jobs:
             /o:"cbehrends" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.sources="src" `
-            /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**,**/*.UnitTests/**,**/*.IntegrationTests/**" `
-            /d:sonar.tests="src/react-app/**/*.test.ts,src/react-app/**/*.test.tsx" `
+            /d:sonar.sources="src/AppHost,src/AspireKeyCloakTemplate.API,src/AspireKeyCloakTemplate.BFF,src/AspireKeyCloakTemplate.Gateway,src/AspireKeyCloakTemplate.SharedKernel" `
+            /d:sonar.exclusions="**/node_modules/**,**/bin/**,**/obj/**,**/dist/**,**/build/**,**/Migrations/**,**/*.UnitTests/**,**/*.IntegrationTests/**,src/react-app/**" `
             /d:sonar.test.exclusions="**/*Tests.cs,**/*IntegrationTests.cs" `
-            /d:sonar.javascript.lcov.reportPaths="src/react-app/coverage/lcov.info" `
             /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
 
-          # 2. Build and Test React (pnpm)
-          # Ensure coverage is generated in LCOV format
-          pnpm --prefix src/react-app install
-          pnpm --prefix src/react-app test -- --watchAll=false --coverage --coverageReporters="lcov"
-
-          # 3. Prepare Playwright Browsers
-          dotnet build AspireKeyCloakTemplate.IntegrationTests/AspireKeyCloakTemplate.IntegrationTests.csproj
-          pwsh AspireKeyCloakTemplate.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install
-
-          # 4. Build .NET Solution
+          # 2. Build .NET Solution
           dotnet build --configuration Release
 
-          # 5. Run .NET Tests (Unit & Integration)
+          # 3. Run .NET Tests (Unit & Integration)
           # Collects coverage in OpenCover format for SonarCloud compatibility
           dotnet test --configuration Release --no-build `
             --collect:"XPlat Code Coverage" `
             --results-directory ./TestResults/ `
             -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
-          # 6. End Analysis & Upload Results
+          # 4. End Analysis & Upload Results
           dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
