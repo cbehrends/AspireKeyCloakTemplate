@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { Home, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useBffUser } from "@/features";
 import { logout } from "@/features/authentication/api/user";
 
-export default function NavigationHeader() {
+export default function Header() {
 	const [isOpen, setIsOpen] = useState(false);
 	const { user, loading } = useBffUser();
 
@@ -15,7 +15,7 @@ export default function NavigationHeader() {
 		logout();
 	};
 
-	let userContent;
+	let userContent: ReactNode;
 	if (loading) {
 		userContent = <span className="text-gray-400">Loading...</span>;
 	} else if (user?.isAuthenticated) {
@@ -23,6 +23,7 @@ export default function NavigationHeader() {
 			<>
 				<span className="mr-4">Hello, {user.name || "User"}</span>
 				<button
+					type="button"
 					onClick={handleLogout}
 					className="px-3 py-1 bg-red-600 rounded hover:bg-red-700 inline-block cursor-pointer"
 				>

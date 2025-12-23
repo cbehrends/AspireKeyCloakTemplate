@@ -15,10 +15,7 @@ interface ProviderProps {
 	readonly queryClient: QueryClient;
 }
 
-export function Provider({
-	children,
-	queryClient,
-}: Readonly<ProviderProps>) {
+export function Provider({ children, queryClient }: Readonly<ProviderProps>) {
 	return (
 		<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
 	);

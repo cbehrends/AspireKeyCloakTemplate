@@ -7,9 +7,10 @@
     "build": "vite build",
     "serve": "vite preview",
     "test": "vitest run",
-    "format": "biome format",
+    "format": "biome format --write",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "fix": "biome check --write"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
@@ -26,7 +27,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "highlight.js": "^11.11.1",
-    "keycloak-js": "^26.1.3",
     "lucide-react": "^0.544.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
