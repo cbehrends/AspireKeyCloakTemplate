@@ -132,6 +132,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set lower-case version tag
+        id: lowercasetag
+        run: echo "version_tag=$(echo '${{ needs.gitversion.outputs.fullSemVer }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
       - name: Build API image
         uses: docker/build-push-action@v5
         with:
@@ -139,7 +143,7 @@ jobs:
           file: ./Dockerfile.api
           push: false
           tags: |
-            api:${{ needs.gitversion.outputs.fullSemVer }}
+            api:${{ steps.lowercasetag.outputs.version_tag }}
             api:latest
           outputs: type=docker,dest=/tmp/api.tar
           cache-from: type=gha
@@ -152,7 +156,7 @@ jobs:
           file: ./Dockerfile.bff
           push: false
           tags: |
-            bff:${{ needs.gitversion.outputs.fullSemVer }}
+            bff:${{ steps.lowercasetag.outputs.version_tag }}
             bff:latest
           outputs: type=docker,dest=/tmp/bff.tar
           cache-from: type=gha
@@ -169,7 +173,7 @@ jobs:
         run: |
           cat > /tmp/build-metadata.json <<EOF
           {
-            "version": "${{ needs.gitversion.outputs.fullSemVer }}",
+            "version": "${{ steps.lowercasetag.outputs.version_tag }}",
             "semVer": "${{ needs.gitversion.outputs.semVer }}",
             "majorMinorPatch": "${{ needs.gitversion.outputs.majorMinorPatch }}",
             "commit-sha": "${{ github.sha }}",

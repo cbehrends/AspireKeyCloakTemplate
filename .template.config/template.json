@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Corey Behrends",
+  "classifications": ["web", "aspire", "api", "bff", "gateway", "integration", "template"],
+  "identity": "AspireKeyCloakTemplate.Template",
+  "name": "Aspire Clean Template with KeyCloak",
+  "shortName": "aspireclean",
+  "description": "A full-featured Aspire-based clean architecture template.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "AspireKeyCloakTemplate",
+  "preferNameDirectory": true,
+  "symbols": {
+    "projectName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "AspireKeyCloakTemplate",
+      "description": "The name of the project and root namespace.",
+      "defaultValue": "AspireKeyCloakTemplate"
+    }
+  },
+  "postActions": [
+    {
+      "actionId": "210D431E-2C38-44D4-83C0-18C280173255",
+      "description": "Restore NuGet packages",
+      "manualInstructions": [
+        { "text": "Run 'dotnet restore' to install dependencies." }
+      ],
+      "continueOnError": true
+    },
+    {
+      "actionId": "E8471B2E-1A2B-4B2A-9B2B-1B2B1B2B1B2B",
+      "description": "Initialize git repository",
+      "manualInstructions": [
+        { "text": "Run 'git init' to initialize a new git repository." }
+      ],
+      "continueOnError": true,
+      "args": {
+        "executable": "git",
+        "args": "init"
+      }
+    }
+  ]
+}
