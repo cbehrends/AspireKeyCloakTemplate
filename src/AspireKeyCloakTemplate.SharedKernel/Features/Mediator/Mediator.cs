@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,44 +7,38 @@ namespace AspireKeyCloakTemplate.SharedKernel.Features.Mediator;
 /// <summary>
 ///     Default mediator implementation
 /// </summary>
-public class Mediator : IMediator
+public class Mediator(IServiceProvider serviceProvider) : IMediator
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public Mediator(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private static readonly ConcurrentDictionary<Type, object> HandlerWrapperCache = new();
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         var requestType = request.GetType();
-        var responseType = typeof(TResponse);
+        
+        var wrapper = (RequestHandlerWrapperBase<TResponse>)HandlerWrapperCache.GetOrAdd(
+            requestType,
+            static rt =>
+            {
+                var responseType = typeof(TResponse);
+                var handlerWrapperType = typeof(RequestHandlerWrapper<,>).MakeGenericType(rt, responseType);
+                return Activator.CreateInstance(handlerWrapperType)!;
+            });
 
-        var handlerWrapperType = typeof(RequestHandlerWrapper<,>).MakeGenericType(requestType, responseType);
-        var handlerWrapper = Activator.CreateInstance(handlerWrapperType);
-
-        var handleMethod =
-            handlerWrapperType.GetMethod(nameof(RequestHandlerWrapper<IRequest<TResponse>, TResponse>.Handle));
-
-        try
-        {
-            return (Task<TResponse>)handleMethod!.Invoke(handlerWrapper,
-                [request, _serviceProvider, cancellationToken])!;
-        }
-        catch (TargetInvocationException ex) when (ex.InnerException != null)
-        {
-            // Unwrap the TargetInvocationException to preserve the original exception
-            throw ex.InnerException;
-        }
+        return wrapper.Handle(request, serviceProvider, cancellationToken);
     }
 
-    private sealed class RequestHandlerWrapper<TRequest, TResponse>
+    private abstract class RequestHandlerWrapperBase<TResponse>
+    {
+        public abstract Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider serviceProvider,
+            CancellationToken cancellationToken);
+    }
+
+    private sealed class RequestHandlerWrapper<TRequest, TResponse> : RequestHandlerWrapperBase<TResponse>
         where TRequest : IRequest<TResponse>
     {
-        public Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider serviceProvider,
+        public override Task<TResponse> Handle(IRequest<TResponse> request, IServiceProvider serviceProvider,
             CancellationToken cancellationToken)
         {
             Task<TResponse> Handler()
@@ -53,13 +48,23 @@ public class Mediator : IMediator
 
             var behaviors = serviceProvider.GetService<IEnumerable<IPipelineBehavior<TRequest, TResponse>>>();
 
-            if (behaviors == null || !behaviors.Any()) return Handler();
+            if (behaviors == null) return Handler();
+            
+            // Use array and manual iteration for better performance
+            var behaviorArray = behaviors as IPipelineBehavior<TRequest, TResponse>[] ?? behaviors.ToArray();
+            if (behaviorArray.Length == 0) return Handler();
 
-            return behaviors
-                .Reverse()
-                .Aggregate(
-                    (RequestHandlerDelegate<TResponse>)Handler,
-                    (next, behavior) => () => behavior.Handle((TRequest)request, next, cancellationToken))();
+            RequestHandlerDelegate<TResponse> next = Handler;
+            
+            // Build pipeline in reverse order without LINQ
+            for (var i = behaviorArray.Length - 1; i >= 0; i--)
+            {
+                var behavior = behaviorArray[i];
+                var currentNext = next;
+                next = () => behavior.Handle((TRequest)request, currentNext, cancellationToken);
+            }
+            
+            return next();
         }
 
         private static IRequestHandler<TRequest, TResponse> GetHandler(IServiceProvider serviceProvider)
