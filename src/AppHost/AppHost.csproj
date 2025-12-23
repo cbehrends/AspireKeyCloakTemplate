@@ -17,6 +17,7 @@
         <PackageReference Include="Aspire.Hosting.AppHost"/>
         <PackageReference Include="Aspire.Hosting.Keycloak"/>
         <PackageReference Include="Aspire.Hosting.NodeJs"/>
+        <PackageReference Include="Aspire.Hosting.Seq" />
         <PackageReference Include="Aspire.Hosting.Yarp"/>
         <PackageReference Include="CommunityToolkit.Aspire.Hosting.NodeJS.Extensions"/>
     </ItemGroup>

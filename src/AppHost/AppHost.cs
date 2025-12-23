@@ -2,6 +2,11 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var seq = builder.AddSeq("seq")
+    .ExcludeFromManifest()
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithEnvironment("ACCEPT_EULA", "Y");
+
 var username = builder.AddParameter("username", "admin");
 var password = builder.AddParameter("password", "password", secret: true);
 
@@ -12,6 +17,8 @@ var realmsJsonPath = Environment.GetEnvironmentVariable("REALMS_JSON_PATH") ?? d
 
 var keyCloak = builder
     .AddKeycloak("keycloak", 8080, username, password)
+    .WithReference(seq)
+    .WaitFor(seq)
     .WithLifetime(ContainerLifetime.Session)
     .WithDataVolume()
     .WithBindMount(realmsJsonPath,
@@ -26,12 +33,16 @@ var keyCloak = builder
 var api = builder
     .AddProject<AspireKeyCloakTemplate_API>("api", "https")
     .WithExternalHttpEndpoints()
+    .WithReference(seq)
+    .WaitFor(seq)
     .WithReference(keyCloak)
     .WaitFor(keyCloak);
 
 var reactApp = builder
     .AddViteApp("react-app", "../react-app")
     .WithPnpmPackageInstallation()
+    .WithReference(seq)
+    .WaitFor(seq)
     .WithEndpoint("http", endpoint =>
     {
         // This sets the *exposed* port Aspire uses to communicate with the app
@@ -43,6 +54,8 @@ var reactApp = builder
 builder
     .AddProject<AspireKeyCloakTemplate_BFF>("bff", "https")
     .WithExternalHttpEndpoints()
+    .WithReference(seq)
+    .WaitFor(seq)
     .WithReference(keyCloak)
     .WithReference(reactApp)
     .WithReference(api);

@@ -20,6 +20,7 @@ public static class Extensions
 
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
+        builder.AddSeqEndpoint("seq");
         builder.ConfigureOpenTelemetry();
 
         builder.AddDefaultHealthChecks();
