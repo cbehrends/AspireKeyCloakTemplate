@@ -10,5 +10,4 @@
     </Folder>
     <Project Path="src/AppHost/AppHost.csproj" />
     <Project Path="src/AspireKeyCloakTemplate.API/AspireKeyCloakTemplate.API.csproj" />
-    <Project Path="src/Benchmarks/MediatorVsServiceBenchmarks/MediatorVsServiceBenchmarks.csproj" />
 </Solution>
